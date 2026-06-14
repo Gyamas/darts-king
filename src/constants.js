@@ -44,7 +44,7 @@ export const CATS = {
     tagline: "MEDLEY BATTLE",
   },
   robo: {
-    label: "ROBO RIVAL",
+    label: "ROBO BATTLE",
     jp: "ロボ対戦",
     accent: "#8B5CF6",
     soft: "rgba(139,92,246,0.13)",
