@@ -405,7 +405,7 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
               </div>
               <div style={{ fontSize: 12.5, color: C.creamDim, marginTop: 10, lineHeight: 1.7 }}>{desc}</div>
               <div style={{ fontFamily: FONT_DISPLAY, fontSize: 13, letterSpacing: "0.15em", color: TH.accent, marginTop: 10 }}>
-                {type === "match" ? `BEST OF ${legs} ・ MEDLEY` : limit > 0 ? `${limit} ROUNDS` : "ラウンド無制限"}
+                {type === "match" ? `BEST OF ${legs} ・ ${mode === "hard" ? "LEG MATCH" : "MEDLEY"}` : limit > 0 ? `${limit} ROUNDS` : "ラウンド無制限"}
                 {kind === "01" || type === "match" ? ` ・ ${mode === "soft" ? "SOFT" : "STEEL"}` : ""}
               </div>
             </div>
@@ -684,7 +684,7 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
             {cat === "robo" && (
               <div style={{ fontSize: 12, color: C.cream, background: C.surface, border: `1px solid ${C.line}`, borderRadius: 10, padding: "9px 12px", marginBottom: 18 }}>
                 <span style={{ color: TH.accent, fontWeight: 700 }}>ROBO Lv.{roboLv}</span> との1vs1対戦です。あなたのプレイヤーを設定してください
-                {roboGame === "match" && <span>(メドレー: 先攻はレグごとに交代)</span>}
+                {roboGame === "match" && <span>({mode === "hard" ? "レグ戦" : "メドレー"}: 先攻はレグごとに交代)</span>}
               </div>
             )}
             <div style={{ display: cat === "match" || cat === "robo" ? "none" : "flex", gap: 6, marginBottom: 18 }}>
