@@ -69,6 +69,8 @@ export function roboAim(g) {
       if (scoreDiff < 40) return aim(myScoring[0]);
       // 40点以上リードしていたら相手の得点源をカット
       if (oppScoring.length > 0) return aim(oppScoring[0]);
+      // 脅威がなければ未開放の数字を閉じてゲームを終わらせにいく
+      if (productiveTargets.length > 0) return aim(productiveTargets[0]);
       return aim(myScoring[0]);
     }
 
