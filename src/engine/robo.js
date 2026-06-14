@@ -55,10 +55,14 @@ export function roboAim(g) {
     // 相手が得点できる数字(相手3本、自分未クローズ、デッドでない) = カット対象
     const oppScoring = CRICKET_NUMS.filter(n => !isDeadNumber(g, n) && g.marks[opp][n] >= 3 && g.marks[i][n] < 3);
 
-    // 自分が開けると得点源になる数字(相手も未クローズ) → マーク数降順で並べ、進捗が多い数字を優先
+    // 自分が開けると得点源になる数字(相手も未クローズ) → マーク数降順・BULLは常に最後
     const productiveTargets = CRICKET_NUMS
       .filter(n => !isDeadNumber(g, n) && g.marks[i][n] < 3 && g.marks[opp][n] < 3)
-      .sort((a, b) => g.marks[i][b] - g.marks[i][a]);
+      .sort((a, b) => {
+        if (a === "B") return 1;
+        if (b === "B") return -1;
+        return g.marks[i][b] - g.marks[i][a];
+      });
 
     // 緊急防御: 100点以上離されていたら相手の得点源を止めに行く
     if (scoreDiff < -100 && oppScoring.length > 0) return aim(oppScoring[0]);
