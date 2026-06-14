@@ -19,7 +19,7 @@ export function newGame(cfg) {
     sepaBull: !!cfg.sepaBull, // true: 25/50セパレートブル, false: 50点統一
     roundLimit: roundLimitOf(kind, cfg.type, cfg.mode, team), // 0 = 無制限
     gid: Date.now(), // スタッツ保存の重複防止用ID
-    robo: cfg.robo || null, // ROBO RIVAL設定 {lv, idx}
+    robo: cfg.robo || null, // ROBO BATTLE設定 {lv, idx}
     profileIds: cfg.profileIds || cfg.names.map(() => null),
     avatars: cfg.avatars || cfg.names.map(() => null),
     // rounds/points/darts/marks = 100%スタッツ(PHOENIX用)、r80/p80/m80 = 80%スタッツ(DL用)

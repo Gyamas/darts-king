@@ -41,7 +41,7 @@ export function segmentPoint(num, mult) {
 }
 
 
-// ---------- ROBO RIVAL: 着弾シミュレーションAI ----------
+// ---------- ROBO BATTLE: 着弾シミュレーションAI ----------
 // 着弾点(x,y)→セグメント変換(DartBoardのRと完全一致させること)
 export function pointToSegment(x, y) {
   const dx = x - 200, dy = y - 200;

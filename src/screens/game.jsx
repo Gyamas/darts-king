@@ -236,7 +236,7 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [g.finished, g.gid]);
 
-  // ROBO RIVAL: ロボのターンを自動進行(1投ごとにディレイ、ターン終了で自動交代)
+  // ROBO BATTLE: ロボのターンを自動進行(1投ごとにディレイ、ターン終了で自動交代)
   useEffect(() => {
     if (!g.robo || g.finished || g.current !== g.robo.idx) return;
     if (g.darts.length >= 3 || g.bust) {
