@@ -64,8 +64,9 @@ export function roboAim(g) {
         return g.marks[i][b] - g.marks[i][a];
       });
 
-    // 緊急防御: 100点以上離されていたら相手の得点源を止めに行く
-    if (scoreDiff < -100 && oppScoring.length > 0) return aim(oppScoring[0]);
+    // 緊急防御: 得点源がなく100点以上離されていたら相手の得点源を止めに行く
+    // (自分に得点源がある場合は得点で挽回できるため防御より優先しない)
+    if (myScoring.length === 0 && scoreDiff < -100 && oppScoring.length > 0) return aim(oppScoring[0]);
 
     // 得点できる数字があり、かつオーバーキルゾーン(200点差)でない場合
     if (myScoring.length > 0 && scoreDiff < 200) {
