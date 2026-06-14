@@ -163,72 +163,92 @@ export function DartBoard({ g, disabled, onSegment, corkMode, corkMarks, onCork,
 
 
 // ---------- keypad ----------
-export function Keypad({ g, mult, setMult, onDart, locked }) {
+export function Keypad({ g, onDart, locked }) {
   const turnOver = locked || g.darts.length >= 3 || g.bust || g.finished;
-  const multBtn = (m, label, color) => (
-    <button
-      key={m}
-      onClick={() => {
-        UI.tick();
-        setMult(m);
-      }}
-      style={{
-        flex: 1,
-        padding: "10px 0",
-        borderRadius: 10,
-        cursor: "pointer",
-        fontFamily: FONT_DISPLAY,
-        fontSize: 16,
-        fontWeight: 600,
-        letterSpacing: "0.1em",
-        color: mult === m ? (m === 1 ? "#1A1C20" : C.cream) : C.creamDim,
-        background: mult === m ? color : C.surface,
-        border: `1.5px solid ${mult === m ? color : C.line}`,
-      }}
-    >
-      {label}
-    </button>
-  );
+  // 20→11, 10→1 の降順
+  const nums = [20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1];
+  const MULT_COLOR = { 1: C.cream, 2: "#E66059", 3: "#3FBF7F" };
+  const MULT_DOTS  = { 2: "··", 3: "···" };
 
-  const numBtn = (n) => {
+  const cellBtn = (n, m) => {
     const dead = isDeadNumber(g, n);
-    const dimmed = (g.kind === "cricket" && !isCricketTarget(n) && n !== 0) || dead;
+    const cricketDim = g.kind === "cricket" && !isCricketTarget(n);
+    const dimmed = cricketDim || dead;
     return (
       <button
-        key={n}
+        key={`${n}-${m}`}
         disabled={turnOver}
-        onClick={() => onDart(n, mult)}
+        onClick={() => onDart(n, m)}
         style={{
-          padding: "12px 0",
-          borderRadius: 10,
+          padding: "5px 0 4px",
+          borderRadius: 7,
           cursor: turnOver ? "default" : "pointer",
           fontFamily: FONT_DISPLAY,
-          fontSize: 18,
           fontWeight: 600,
-          color: dimmed ? C.creamDim : C.cream,
+          color: dimmed ? C.creamDim : MULT_COLOR[m],
+          opacity: turnOver ? 0.35 : dead ? 0.25 : dimmed ? 0.4 : 1,
+          background: C.surface2,
+          border: "1px solid transparent",
           textDecoration: dead ? "line-through" : "none",
-          opacity: turnOver ? 0.35 : dead ? 0.3 : dimmed ? 0.45 : 1,
-          background: n === "B" ? C.red : n === 0 ? "transparent" : C.surface2,
-          border: `1px solid ${n === 0 ? C.line : "transparent"}`,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 1,
         }}
       >
-        {n === "B" ? "BULL" : n === 0 ? "MISS" : n}
+        <span style={{ fontSize: 14, lineHeight: 1 }}>{n}</span>
+        {m > 1 && <span style={{ fontSize: 7, letterSpacing: "1px", lineHeight: 1 }}>{MULT_DOTS[m]}</span>}
       </button>
     );
   };
 
+  const specialBtn = (label, sub, onClick, bg, border) => (
+    <button
+      disabled={turnOver}
+      onClick={onClick}
+      style={{
+        flex: 1,
+        padding: "8px 0",
+        borderRadius: 9,
+        cursor: turnOver ? "default" : "pointer",
+        fontFamily: FONT_DISPLAY,
+        fontSize: 13,
+        fontWeight: 600,
+        letterSpacing: "0.06em",
+        color: C.cream,
+        opacity: turnOver ? 0.35 : 1,
+        background: bg,
+        border: border || "1px solid transparent",
+        lineHeight: 1.2,
+      }}
+    >
+      <div>{label}</div>
+      {sub && <div style={{ fontSize: 10, opacity: 0.75, marginTop: 1 }}>{sub}</div>}
+    </button>
+  );
+
+  const numGrid = (m) => (
+    <div style={{ display: "grid", gridTemplateColumns: "repeat(10, 1fr)", gap: 3 }}>
+      {nums.map(n => cellBtn(n, m))}
+    </div>
+  );
+
   return (
-    <div style={{ marginTop: 12 }}>
-      <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-        {multBtn(1, "SINGLE", C.cream)}
-        {multBtn(2, "DOUBLE", C.red)}
-        {multBtn(3, "TRIPLE", C.green)}
+    <div style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 3 }}>
+      {/* MISS / BULL(25) / BULL(50) */}
+      <div style={{ display: "flex", gap: 6, marginBottom: 4 }}>
+        {specialBtn("MISS", null, () => onDart(0, 1), "transparent", `1px solid ${C.line}`)}
+        {specialBtn("BULL", "25", () => onDart("B", 1), "rgba(211,67,59,0.4)")}
+        {specialBtn("BULL", "50", () => onDart("B", 2), C.red)}
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 6 }}>
-        {Array.from({ length: 20 }, (_, i) => numBtn(i + 1))}
-        {numBtn("B")}
-        {numBtn(0)}
-      </div>
+      {/* SINGLE */}
+      {numGrid(1)}
+      {/* DOUBLE */}
+      <div style={{ height: 5 }} />
+      {numGrid(2)}
+      {/* TRIPLE */}
+      <div style={{ height: 5 }} />
+      {numGrid(3)}
     </div>
   );
 }

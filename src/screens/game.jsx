@@ -787,7 +787,7 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
               </Btn>
             </>
           ) : (
-            <Keypad g={g} mult={mult} setMult={setMult} onDart={onDart} locked={isRoboTurn} />
+            <Keypad g={g} onDart={onDart} locked={isRoboTurn} />
           )}
 
           {/* hit label flash */}
