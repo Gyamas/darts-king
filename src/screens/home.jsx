@@ -15,9 +15,9 @@ export function Home({ mode, setMode, onPick, onPlayers, sound, toggleSound }) {
       </div>
       <div style={{ textAlign: "center", marginBottom: 24 }}>
         <div style={{ fontFamily: FONT_DISPLAY, fontWeight: 700, fontSize: 44, letterSpacing: "0.12em", color: C.cream, lineHeight: 1 }}>
-          DARTS<span style={{ color: C.red }}> SCORER</span>
+          DARTS<span style={{ color: C.red }}> KING</span>
         </div>
-        <div style={{ color: C.creamDim, fontSize: 13, marginTop: 8, letterSpacing: "0.2em" }}>スコア記録アプリ</div>
+        <div style={{ color: C.creamDim, fontSize: 13, marginTop: 8, letterSpacing: "0.2em" }}>練習・対戦・レーティング</div>
       </div>
 
       <div style={{ display: "flex", gap: 8, marginBottom: 6 }}>
