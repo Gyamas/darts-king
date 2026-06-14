@@ -78,10 +78,14 @@ export function roboAim(g) {
       return aim(myScoring[0]);
     }
 
-    // オーバーキルゾーン or 得点源なし: 相手カット → 未開放を開ける → 最終手段で得点
-    if (oppScoring.length > 0) return aim(oppScoring[0]);
+    // 得点源なし or オーバーキルゾーン
+    // 相手が60点以上リードかつ得点源を持っている場合のみ防御優先
+    if (scoreDiff < -60 && oppScoring.length > 0) return aim(oppScoring[0]);
+    // それ以外は自分の得点源を作ることを優先(相手の数字を閉じてもデッドになるだけ)
     if (productiveTargets.length > 0) return aim(productiveTargets[0]);
-    if (myScoring.length > 0) return aim(myScoring[0]); // 他に手がない場合のみ
+    // 他に手がない場合のみ防御・得点
+    if (oppScoring.length > 0) return aim(oppScoring[0]);
+    if (myScoring.length > 0) return aim(myScoring[0]);
 
     return segAim("B", 2);
   }
