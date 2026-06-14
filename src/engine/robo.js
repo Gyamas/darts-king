@@ -67,8 +67,8 @@ export function roboAim(g) {
     // 緊急防御: 100点以上離されていたら相手の得点源を止めに行く
     if (scoreDiff < -100 && oppScoring.length > 0) return aim(oppScoring[0]);
 
-    // 得点できる数字がある場合
-    if (myScoring.length > 0) {
+    // 得点できる数字があり、かつオーバーキルゾーン(200点差)でない場合
+    if (myScoring.length > 0 && scoreDiff < 200) {
       // リードが40点未満なら得点を積んでバッファを作る
       if (scoreDiff < 40) return aim(myScoring[0]);
       // 40点以上リードしていたら相手の得点源をカット
@@ -78,12 +78,10 @@ export function roboAim(g) {
       return aim(myScoring[0]);
     }
 
-    // 得点源がまだない: 閉じた後に自分の得点源になる数字を優先して開ける
-    // (相手がすでにオープン済みの数字を閉じてもデッドになるだけなので後回し)
-    if (productiveTargets.length > 0) return aim(productiveTargets[0]);
-
-    // productive な数字がなければ仕方なく相手のオープン数字を閉じる(防御)
+    // オーバーキルゾーン or 得点源なし: 相手カット → 未開放を開ける → 最終手段で得点
     if (oppScoring.length > 0) return aim(oppScoring[0]);
+    if (productiveTargets.length > 0) return aim(productiveTargets[0]);
+    if (myScoring.length > 0) return aim(myScoring[0]); // 他に手がない場合のみ
 
     return segAim("B", 2);
   }

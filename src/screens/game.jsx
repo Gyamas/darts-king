@@ -300,6 +300,21 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
       if (newlyDead) setTimeout(() => UI.dead(), 300);
     }
 
+    // クリケット: オーバーキル警告(人間プレイヤーが200点差以上で得点した場合)
+    if (g.kind === "cricket" && (!g.robo || g.current !== g.robo.idx)) {
+      const p = g.current;
+      const gained = g2.scores[p] - g.scores[p];
+      if (gained > 0) {
+        const maxOpp = Math.max(...g2.scores.filter((_, idx) => idx !== p));
+        if (g2.scores[p] - maxOpp >= 200) {
+          setTimeout(() => {
+            setFlash({ label: "OVERKILL!", color: "#FF6B35", key: Date.now() });
+            if (sound) { try { UI.dead(); } catch (e) {} }
+          }, 400);
+        }
+      }
+    }
+
     // アワード判定(3投目終了時)
     const awardKind = g2.kind === "01" || g2.kind === "countup" || g2.kind === "cricket";
     if (awardKind && ((g2.darts.length === 3 && !g2.bust && !g2.finished) || (g2.finished && g2.mode === "hard" && g2.darts.reduce((s, x) => s + x.value, 0) === 180))) {
