@@ -44,14 +44,41 @@ export function roboAim(g) {
   const i = g.robo.idx;
   if (g.kind === "countup") return isFatBull(g) ? segAim("B", 2) : segAim(20, 3); // セオリー: 50点ブルならブル直行
   if (g.kind === "cricket") {
-    // 自陣未クローズの最上位 → なければ得点源(生きている自陣)
-    for (const n of CRICKET_NUMS) {
-      if (isDeadNumber(g, n)) continue;
-      if (g.marks[i][n] < 3) return n === "B" ? segAim("B", 2) : segAim(n, 3);
+    const opp = 1 - i;
+    const scoreDiff = g.scores[i] - g.scores[opp]; // 正 = 自分がリード
+
+    const aim = (n) => n === "B" ? segAim("B", 2) : segAim(n, 3);
+
+    // 自分が得点できる数字(自分3本、相手未クローズ、デッドでない)
+    const myScoring = CRICKET_NUMS.filter(n => !isDeadNumber(g, n) && g.marks[i][n] >= 3);
+
+    // 相手が得点できる数字(相手3本、自分未クローズ、デッドでない) = カット対象
+    const oppScoring = CRICKET_NUMS.filter(n => !isDeadNumber(g, n) && g.marks[opp][n] >= 3 && g.marks[i][n] < 3);
+
+    // 自分が開けると得点源になる数字(相手も未クローズ) → マーク数降順で並べ、進捗が多い数字を優先
+    const productiveTargets = CRICKET_NUMS
+      .filter(n => !isDeadNumber(g, n) && g.marks[i][n] < 3 && g.marks[opp][n] < 3)
+      .sort((a, b) => g.marks[i][b] - g.marks[i][a]);
+
+    // 緊急防御: 100点以上離されていたら相手の得点源を止めに行く
+    if (scoreDiff < -100 && oppScoring.length > 0) return aim(oppScoring[0]);
+
+    // 得点できる数字がある場合
+    if (myScoring.length > 0) {
+      // リードが40点未満なら得点を積んでバッファを作る
+      if (scoreDiff < 40) return aim(myScoring[0]);
+      // 40点以上リードしていたら相手の得点源をカット
+      if (oppScoring.length > 0) return aim(oppScoring[0]);
+      return aim(myScoring[0]);
     }
-    for (const n of CRICKET_NUMS) {
-      if (!isDeadNumber(g, n) && g.marks[i][n] === 3) return n === "B" ? segAim("B", 2) : segAim(n, 3);
-    }
+
+    // 得点源がまだない: 閉じた後に自分の得点源になる数字を優先して開ける
+    // (相手がすでにオープン済みの数字を閉じてもデッドになるだけなので後回し)
+    if (productiveTargets.length > 0) return aim(productiveTargets[0]);
+
+    // productive な数字がなければ仕方なく相手のオープン数字を閉じる(防御)
+    if (oppScoring.length > 0) return aim(oppScoring[0]);
+
     return segAim("B", 2);
   }
   // 01
