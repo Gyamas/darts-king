@@ -1,4 +1,4 @@
-# 🎯 DARTS SCORER — ハード&ソフト二刀流スコアラー
+# 🎯 DARTS　KING — ハード&ソフト二刀流スコアラー
 
 スティールダーツ(ハード)とソフトダーツ、**2つの文化をモード切替ひとつで丸ごと行き来できる**スコアリングアプリ。
 ハードはパブの木目とノック音、501レグ戦、チェックアウト定石提案、180コール。ソフトはアーケードの電子音、Rt/80%スタッツ、メドレー、プロ試験練習。プレイヤーは共通プロフィールで、両文化の成績を一人の中に積み上げます。
@@ -82,7 +82,7 @@ git push -u origin main
 2. Framework Preset: **Vite**(自動検出)。Build Command `npm run build` / Output `dist` のままでOK
 3. Deploy。以後は`main`へのpushで自動デプロイ
 
-GitHub Pagesの場合は `vite.config.js` に `base: "/darts-scorer/"` を追加し、`dist`を`gh-pages`ブランチへ。
+GitHub Pagesの場合は `vite.config.js` に `base: "/darts-king/"` を追加し、`dist`を`gh-pages`ブランチへ。
 
 ## 🗺 ロードマップ
 
