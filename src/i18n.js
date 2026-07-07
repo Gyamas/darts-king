@@ -205,6 +205,20 @@ export const DICTS = {
     "ui.ratingMode.px": "PHOENIX方式",
     "ui.ratingMode.pxSub": "Rt 1〜30 ・ クラス",
     "ui.ratingMode.hint": "換算方式の表示切替です。記録データは共通なのでいつでも変更できます",
+
+    "award.whiteHorse.sub": "3種類のトリプル!",
+    "award.threeInTheBlack.sub": "インナーブル3連!",
+    "award.hatTrick.sub": "ブル3連発!",
+    "award.nineMark.sub": "パーフェクトラウンド!",
+    "award.niceMark.sub": "ナイスマーク!",
+    "award.oneEighty.sub": "180!!",
+    "award.points.sub": "{total}点!",
+    "award.ton80.sub": "パーフェクト 180点!",
+    "award.threeInABed.sub": "T{num}を3連!",
+
+    "robo.rtText.avg": "AVG {avg} 相当",
+    "robo.rtText.px": "PX Rt {rt}({cls})相当",
+    "robo.rtText.dl": "Rt {rt} 相当",
   },
   en: {},
 };

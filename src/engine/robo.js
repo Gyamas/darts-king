@@ -1,5 +1,6 @@
 import { CRICKET_NUMS } from "../constants.js";
 import { isDeadNumber, isFatBull, pointToSegment, segAim } from "./board.js";
+import { t } from "../i18n.js";
 import { PX_01, PX_CR, RATING_MODE, STATS_MODE, pxClass, pxRtFrom } from "../profiles.js";
 
 
@@ -25,12 +26,12 @@ export const roboSpecMpr = (lv) => 0.9 + 0.4 * lv;
 
 // 表示方式に応じたロボのRt表記
 export function roboRtText(lv) {
-  if (STATS_MODE === "hard") return `AVG ${roboSpec01(lv).toFixed(0)} 相当`;
+  if (STATS_MODE === "hard") return t("robo.rtText.avg", { avg: roboSpec01(lv).toFixed(0) });
   if (RATING_MODE === "px") {
     const r = Math.round((pxRtFrom(roboSpec01(lv) / 3, PX_01) + pxRtFrom(roboSpecMpr(lv), PX_CR)) / 2);
-    return `PX Rt ${r}(${pxClass(r)})相当`;
+    return t("robo.rtText.px", { rt: r, cls: pxClass(r) });
   }
-  return `Rt ${2 * lv} 相当`;
+  return t("robo.rtText.dl", { rt: 2 * lv });
 }
 
 export function roboStatText(lv) {

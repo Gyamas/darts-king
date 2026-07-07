@@ -1,4 +1,5 @@
 import { CRCU_SEQ, CRICKET_NUMS, GAMES, HALFIT_SEQ, P121_CHALLENGES, deep, roundLimitOf } from "../constants.js";
+import { t } from "../i18n.js";
 import { dartLabel, dartValue, isFatBull, segmentPoint } from "./board.js";
 
 
@@ -343,34 +344,34 @@ export function detectAward(g) {
     const triples = d.filter((x) => typeof x.num === "number" && x.num >= 15 && x.num <= 20 && x.mult === 3);
     const distinct = new Set(triples.map((x) => x.num));
     if (triples.length === 3 && distinct.size === 3)
-      return { name: "WHITE HORSE", sub: "3種類のトリプル!", tier: "big" };
-    if (allInnerBull) return { name: "THREE IN THE BLACK", sub: "インナーブル3連!", tier: "big" };
-    if (allBull) return { name: "HAT TRICK", sub: "ブル3連発!", tier: "big" };
+      return { name: "WHITE HORSE", sub: t("award.whiteHorse.sub"), tier: "big" };
+    if (allInnerBull) return { name: "THREE IN THE BLACK", sub: t("award.threeInTheBlack.sub"), tier: "big" };
+    if (allBull) return { name: "HAT TRICK", sub: t("award.hatTrick.sub"), tier: "big" };
     const marks = d.reduce(
       (s, x) =>
         s + (x.num === "B" ? Math.min(x.mult, 2) : typeof x.num === "number" && x.num >= 15 && x.num <= 20 ? x.mult : 0),
       0
     );
-    if (marks >= 9) return { name: "9 MARK", sub: "パーフェクトラウンド!", tier: "big" };
-    if (marks >= 5) return { name: `${marks} MARK`, sub: "ナイスマーク!", tier: "mid" };
+    if (marks >= 9) return { name: "9 MARK", sub: t("award.nineMark.sub"), tier: "big" };
+    if (marks >= 5) return { name: `${marks} MARK`, sub: t("award.niceMark.sub"), tier: "mid" };
     return null;
   }
 
   // 01 / count-up
   if (g.mode === "hard") {
     // スティールのコール文化: 180は特別、以下TON 40 / TON
-    if (total === 180) return { name: "ONE HUNDRED AND EIGHTY", sub: "180!!", tier: "oneighty" };
-    if (total >= 140) return { name: "TON 40", sub: `${total}点!`, tier: "mid" };
-    if (total >= 100) return { name: "TON", sub: `${total}点!`, tier: "mid" };
+    if (total === 180) return { name: "ONE HUNDRED AND EIGHTY", sub: t("award.oneEighty.sub"), tier: "oneighty" };
+    if (total >= 140) return { name: "TON 40", sub: t("award.points.sub", { total }), tier: "mid" };
+    if (total >= 100) return { name: "TON", sub: t("award.points.sub", { total }), tier: "mid" };
     return null;
   }
-  if (total === 180) return { name: "TON 80", sub: "パーフェクト 180点!", tier: "big" };
+  if (total === 180) return { name: "TON 80", sub: t("award.ton80.sub"), tier: "big" };
   const sameTriple =
     typeof d[0].num === "number" && d.every((x) => x.mult === 3 && x.num === d[0].num);
-  if (sameTriple) return { name: "THREE IN A BED", sub: `T${d[0].num}を3連!`, tier: "big" };
-  if (allInnerBull) return { name: "THREE IN THE BLACK", sub: "インナーブル3連!", tier: "big" };
-  if (allBull) return { name: "HAT TRICK", sub: "ブル3連発!", tier: "big" };
-  if (total >= 151) return { name: "HIGH TON", sub: `${total}点!`, tier: "mid" };
-  if (total >= 100) return { name: "LOW TON", sub: `${total}点!`, tier: "mid" };
+  if (sameTriple) return { name: "THREE IN A BED", sub: t("award.threeInABed.sub", { num: d[0].num }), tier: "big" };
+  if (allInnerBull) return { name: "THREE IN THE BLACK", sub: t("award.threeInTheBlack.sub"), tier: "big" };
+  if (allBull) return { name: "HAT TRICK", sub: t("award.hatTrick.sub"), tier: "big" };
+  if (total >= 151) return { name: "HIGH TON", sub: t("award.points.sub", { total }), tier: "mid" };
+  if (total >= 100) return { name: "LOW TON", sub: t("award.points.sub", { total }), tier: "mid" };
   return null;
 }
