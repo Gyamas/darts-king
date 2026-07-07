@@ -6,6 +6,19 @@ export const DICTS = {
   ja: {
     "settings.language": "言語",
 
+    "cat.01.name": "ゼロワン",
+    "cat.01.desc": "持ち点をちょうど0に削り切るカウントダウン。終盤の一投に痺れる定番。",
+    "cat.countup.name": "カウントアップ",
+    "cat.countup.desc": "8ラウンドの合計点をひたすら積み上げる。腕試しと練習の王道。",
+    "cat.cricket.name": "クリケット",
+    "cat.cricket.desc": "15〜20とブルを3マークで自分の陣地に。奪い合いの頭脳戦。",
+    "cat.practice.name": "練習",
+    "cat.practice.desc": "カウントアップ、Around the Clock、Bob's 27、121。一人でも積み上がる練習メニュー。",
+    "cat.match.name": "マッチ(メドレー)",
+    "cat.match.desc": "01とクリケットを交互に戦うレグ制の本格対戦。先に過半数のレグを取った方が勝者。",
+    "cat.robo.name": "ロボ対戦",
+    "cat.robo.desc": "実力校正済みのダーツロボとガチンコ勝負。Lv.1(Rt2)からLv.9(Rt18)まで、自分のRtに合う相手と練習できる。",
+
     "home.subtitle": "練習・対戦・レーティング",
     "home.modeHard": "🎯 ハードダーツ",
     "home.modeSoft": "🕹 ソフトダーツ",

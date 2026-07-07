@@ -89,7 +89,7 @@ export function Home({ mode, setMode, onPick, onPlayers, sound, toggleSound }) {
               <div style={{ fontFamily: FONT_DISPLAY, fontSize: 19, fontWeight: 600, letterSpacing: "0.06em", color: ct.accent, marginTop: 8, lineHeight: 1.1 }}>
                 {ct.label}
               </div>
-              <div style={{ fontSize: 11.5, color: C.cream, marginTop: 2, fontFamily: FONT_BODY }}>{k === "match" && mode === "hard" ? t("home.matchTileHard") : ct.jp}</div>
+              <div style={{ fontSize: 11.5, color: C.cream, marginTop: 2, fontFamily: FONT_BODY }}>{k === "match" && mode === "hard" ? t("home.matchTileHard") : t("cat." + k + ".name")}</div>
               <div style={{ fontSize: 9, color: C.creamDim, letterSpacing: "0.22em", fontFamily: FONT_DISPLAY, marginTop: 5 }}>{k === "match" && mode === "hard" ? "LEG MATCH" : ct.tagline}</div>
             </button>
           );
