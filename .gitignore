@@ -3,3 +3,4 @@ dist
 .DS_Store
 .vercel
 ios/App/Pods/
+.claude/settings.local.json
