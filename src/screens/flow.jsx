@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { CATS, GAMES, medleySeq, roundLimitOf } from "../constants.js";
 import { roboRtText, roboSpec01, roboSpecMpr, roboStatText } from "../engine/robo.js";
+import { t } from "../i18n.js";
 import { PX_01, PX_CR, RATING_MODE, STATS_MODE, flightOf, fmt01, fmtCr, fmtRt, pxClass, pxRtFrom, statsFor } from "../profiles.js";
 import { ProfileEditor, ProfilePicker } from "./players.jsx";
 import { UI } from "../sound.js";
@@ -30,28 +31,28 @@ export function OptionModal({ kind, accent, outRule, setOutRule, inRule, setInRu
         </div>
         {kind === "01" &&
           row(
-            "IN ー 始め方",
+            t("flow.option.in"),
             <OptionChips
               accent={accent}
               value={inRule}
               onChange={setInRule}
               options={[
-                ["open", "オープン", "1投目から得点"],
-                ["double", "ダブル", "ダブルで開始"],
+                ["open", t("flow.option.open"), t("flow.option.inOpenSub")],
+                ["double", t("flow.option.double"), t("flow.option.inDoubleSub")],
               ]}
             />
           )}
         {kind === "01" &&
           row(
-            "OUT ー 上がり方",
+            t("flow.option.out"),
             <OptionChips
               accent={accent}
               value={outRule}
               onChange={setOutRule}
               options={[
-                ["open", "オープン", "なんでもOK"],
-                ["double", "ダブル", "D・D-ブルのみ"],
-                ["master", "マスター", "D・T・ブル"],
+                ["open", t("flow.option.open"), t("flow.option.outOpenSub")],
+                ["double", t("flow.option.double"), t("flow.option.outDoubleSub")],
+                ["master", t("flow.option.master"), t("flow.option.masterSub")],
               ]}
             />
           )}
@@ -63,8 +64,8 @@ export function OptionModal({ kind, accent, outRule, setOutRule, inRule, setInRu
               value={sepaBull}
               onChange={setSepaBull}
               options={[
-                [false, "50 / 50", "どこでも50点"],
-                [true, "25 / 50", "セパレートブル"],
+                [false, "50 / 50", t("flow.option.bull5050Sub")],
+                [true, "25 / 50", t("flow.option.bull2550Sub")],
               ]}
             />
           )}
@@ -98,7 +99,7 @@ export function GameOnSplash({ g, profiles, accent, onDone }) {
     if (g.kind === "cricket") return fmtCr(prof);
     if (g.kind === "atc") {
       const b = statsFor(prof).pr;
-      return b && b.atcBest ? `${b.atcBest}投` : "-";
+      return b && b.atcBest ? t("flow.stat.atcThrows", { n: b.atcBest }) : "-";
     }
     if (g.kind === "crcu") {
       const b = statsFor(prof).pr;
@@ -127,7 +128,7 @@ export function GameOnSplash({ g, profiles, accent, onDone }) {
     return fmt01(prof);
   };
   const statLabel =
-    g.kind === "cricket" ? "MPR" : g.kind === "countup" ? "BEST SCORE" : g.kind === "atc" ? "BEST(最少投数)" : g.kind === "bob" ? "HIGH SCORE" : g.kind === "p121" ? "BEST TARGET" : g.kind === "crcu" ? "BEST MARKS" : g.kind === "halfit" || g.kind === "shoot" ? "BEST SCORE" : "01 STATS";
+    g.kind === "cricket" ? "MPR" : g.kind === "countup" ? "BEST SCORE" : g.kind === "atc" ? t("flow.statLabel.atc") : g.kind === "bob" ? "HIGH SCORE" : g.kind === "p121" ? "BEST TARGET" : g.kind === "crcu" ? "BEST MARKS" : g.kind === "halfit" || g.kind === "shoot" ? "BEST SCORE" : "01 STATS";
   return (
     <div
       onClick={onDone}
@@ -163,7 +164,7 @@ export function GameOnSplash({ g, profiles, accent, onDone }) {
           </div>,
         ])}
       </div>
-      <div style={{ marginTop: 24, fontSize: 11, color: C.creamDim }}>タップでスキップ</div>
+      <div style={{ marginTop: 24, fontSize: 11, color: C.creamDim }}>{t("flow.gameOn.tapToSkip")}</div>
     </div>
   );
 }
@@ -185,12 +186,12 @@ export function CorkModal({ players, mode, accent, teamLocked, onDone, onClose }
         {!done ? (
           <div style={{ textAlign: "center", marginTop: 6 }}>
             <div style={{ fontSize: 15, color: C.cream }}>
-              <span style={{ color: PLAYER_COLORS[marks.length % 4], fontWeight: 700 }}>{players[marks.length].name}</span> の番({marks.length + 1}/{players.length})
+              <span style={{ color: PLAYER_COLORS[marks.length % 4], fontWeight: 700 }}>{players[marks.length].name}</span> {t("flow.cork.turnSuffix")}({marks.length + 1}/{players.length})
             </div>
-            <div style={{ fontSize: 11.5, color: C.creamDim, marginTop: 3 }}>ブルを狙って1本投げて、刺さった位置をボードでタップ</div>
+            <div style={{ fontSize: 11.5, color: C.creamDim, marginTop: 3 }}>{t("flow.cork.instructions")}</div>
           </div>
         ) : (
-          <div style={{ textAlign: "center", fontSize: 12, color: C.creamDim, marginTop: 4 }}>センターに近い順に投げ順が決まりました!</div>
+          <div style={{ textAlign: "center", fontSize: 12, color: C.creamDim, marginTop: 4 }}>{t("flow.cork.orderDecided")}</div>
         )}
 
         <DartBoard g={fakeG} onSegment={() => {}} corkMode={!done} corkMarks={marks} onCork={handleCork} />
@@ -219,7 +220,7 @@ export function CorkModal({ players, mode, accent, teamLocked, onDone, onClose }
                     {teamLocked ? `[${i % 2 === 0 ? "A" : "B"}] ` : ""}
                     {m.player.name}
                   </div>
-                  <div style={{ fontSize: 11, color: C.creamDim, fontVariantNumeric: "tabular-nums" }}>中心から{m.d.toFixed(0)}mm</div>
+                  <div style={{ fontSize: 11, color: C.creamDim, fontVariantNumeric: "tabular-nums" }}>{t("flow.cork.distanceFromCenter", { mm: m.d.toFixed(0) })}</div>
                   {i === 0 && <div style={{ fontSize: 10, fontFamily: FONT_DISPLAY, letterSpacing: "0.12em", color: accent }}>FIRST</div>}
                 </div>
               ))}
@@ -228,7 +229,7 @@ export function CorkModal({ players, mode, accent, teamLocked, onDone, onClose }
               onClick={() => onDone(order.map((m) => m.player))}
               style={{ marginTop: 14, width: "100%", padding: "14px 0", borderRadius: 12, border: "none", cursor: "pointer", background: accent, color: "#fff", fontFamily: FONT_DISPLAY, fontSize: 18, fontWeight: 700, letterSpacing: "0.15em" }}
             >
-              この順番でスタート →
+              {t("flow.startInOrder")}
             </button>
             <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
               <Btn
@@ -238,7 +239,7 @@ export function CorkModal({ players, mode, accent, teamLocked, onDone, onClose }
                 }}
                 style={{ flex: 1, fontSize: 13 }}
               >
-                ↻ やり直し
+                {t("flow.cork.redo")}
               </Btn>
               <Btn
                 onClick={() => {
@@ -247,7 +248,7 @@ export function CorkModal({ players, mode, accent, teamLocked, onDone, onClose }
                 }}
                 style={{ flex: 1, fontSize: 13, color: C.creamDim }}
               >
-                キャンセル
+                {t("flow.cancel")}
               </Btn>
             </div>
           </>
@@ -261,7 +262,7 @@ export function CorkModal({ players, mode, accent, teamLocked, onDone, onClose }
                 }}
                 style={{ flex: 1, fontSize: 13 }}
               >
-                ↩ 1本戻す
+                {t("flow.cork.undoOne")}
               </Btn>
             )}
             <Btn
@@ -271,7 +272,7 @@ export function CorkModal({ players, mode, accent, teamLocked, onDone, onClose }
               }}
               style={{ flex: 1, fontSize: 13, color: C.creamDim }}
             >
-              キャンセル
+              {t("flow.cancel")}
             </Btn>
           </div>
         )}
@@ -289,10 +290,10 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
   const [count, setCount] = useState(cat === "robo" || cat === "practice" ? 1 : 2);
   const [names, setNames] = useState(
     cat === "robo" || cat === "practice"
-      ? [{ name: "プレイヤー 1", pid: null, avatar: null }]
+      ? [{ name: t("flow.defaultPlayerName", { n: 1 }), pid: null, avatar: null }]
       : [
-          { name: "プレイヤー 1", pid: null, avatar: null },
-          { name: "プレイヤー 2", pid: null, avatar: null },
+          { name: t("flow.defaultPlayerName", { n: 1 }), pid: null, avatar: null },
+          { name: t("flow.defaultPlayerName", { n: 2 }), pid: null, avatar: null },
         ]
   );
   const [roboGame, setRoboGame] = useState("501");
@@ -316,7 +317,7 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
 
   const resize = (n) => {
     setCount(n);
-    setNames((ns) => Array.from({ length: n }, (_, i) => ns[i] || { name: `プレイヤー ${i + 1}`, pid: null, avatar: null }));
+    setNames((ns) => Array.from({ length: n }, (_, i) => ns[i] || { name: t("flow.defaultPlayerName", { n: i + 1 }), pid: null, avatar: null }));
   };
   const pickTeam = (t) => {
     setTeam(t);
@@ -325,8 +326,8 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
   const setName = (i, v) => setNames((ns) => ns.map((p, j) => (j === i ? { ...p, name: v } : p)));
   const assignProfile = (i, prof) =>
     setNames((ns) => ns.map((p, j) => (j === i ? { name: prof.name, pid: prof.id, avatar: prof.avatar } : p)));
-  const clearSlot = (i) => setNames((ns) => ns.map((p, j) => (j === i ? { name: `プレイヤー ${i + 1}`, pid: null, avatar: null } : p)));
-  const trimP = (p) => ({ ...p, name: p.name.trim() || "プレイヤー" });
+  const clearSlot = (i) => setNames((ns) => ns.map((p, j) => (j === i ? { name: t("flow.defaultPlayerName", { n: i + 1 }), pid: null, avatar: null } : p)));
+  const trimP = (p) => ({ ...p, name: p.name.trim() || t("flow.defaultPlayerNameBase") });
   const roboPlayer = () => ({ name: `ROBO Lv.${roboLv}`, pid: null, avatar: { kind: "emoji", emoji: "🤖", color: "#8B5CF6" }, robo: true });
   const fullPlayers = () => (cat === "robo" ? [...names.map(trimP), roboPlayer()] : names.map(trimP));
 
@@ -360,30 +361,30 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
   const gameTitle = cat === "01" ? variant : TH.label;
   const desc =
     cat === "01"
-      ? "持ち点をちょうど0にするゲーム。一番早く0にしたプレイヤーの勝利。"
+      ? t("flow.desc.zeroOne")
       : cat === "cricket"
-      ? "15〜20とブルを狙う陣取りゲーム。全エリア獲得後、スコアが高い方の勝利。"
+      ? t("flow.desc.cricket")
       : cat === "match"
       ? mode === "hard"
-        ? "01のみを連戦するレグ制マッチ。先に過半数のレグを取った方が勝者。先攻はレグごとに交代します。"
-        : "01とクリケットを交互に戦うレグ制メドレー。最終レグはその場でゲームを選ぶCHOICE。先攻はレグごとに交代します。"
+        ? t("flow.desc.matchHard")
+        : t("flow.desc.matchSoft")
       : cat === "robo"
-      ? "実力校正済みのロボと1vs1。ロボは正規分布の着弾シミュレーションで投げるので、調子の波もリアル。"
+      ? t("flow.desc.robo")
       : cat === "practice"
       ? pracGame === "countup"
-        ? "8ラウンドの合計点をひたすら積み上げる。スコアリングの基礎体力づくり。"
+        ? t("flow.desc.practiceCountup")
         : pracGame === "shoot"
-        ? "当てた点数×開いたエリア数が得点。一度開けたナンバーは無効。後半ほど高倍率(最大×21)——JAPANプロ試験種目(基準5500点)。"
+        ? t("flow.desc.practiceShoot")
         : pracGame === "crcu"
-        ? "ターゲット(20→19→…→15→ブル×2)に刺さった点数を加算、MPRも計測。JAPANプロ試験種目。"
+        ? t("flow.desc.practiceCrcu")
         : pracGame === "halfit"
-        ? "15→16→ダブル→17→18→トリプル→19→20→ブルの順に狙う。1本も当たらないとスコア半減!"
+        ? t("flow.desc.practiceHalfit")
         : pracGame === "atc"
-        ? "1→2→…→20→ブルを順に当てて完走。ダブルで2つ、トリプルで3つ進む。最少投数を目指せ。"
+        ? t("flow.desc.practiceAtc")
         : pracGame === "bob"
-        ? "持ち点27でD1→D20→D-BULLを各3投。当てれば加点、3投全部外すとその点数を減点、0を切ったら即終了。ダブル練習の王様。"
-        : "残り121から9投以内のチェックアウトに挑戦。成功で+1、失敗で-1。全10挑戦の最高到達点を記録。"
-      : "8ラウンドの合計点をひたすら積み上げるゲーム。";
+        ? t("flow.desc.practiceBob")
+        : t("flow.desc.practiceP121")
+      : t("flow.desc.fallback");
 
   return (
     <div>
@@ -405,14 +406,14 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
               </div>
               <div style={{ fontSize: 12.5, color: C.creamDim, marginTop: 10, lineHeight: 1.7 }}>{desc}</div>
               <div style={{ fontFamily: FONT_DISPLAY, fontSize: 13, letterSpacing: "0.15em", color: TH.accent, marginTop: 10 }}>
-                {type === "match" ? `BEST OF ${legs} ・ ${mode === "hard" ? "LEG MATCH" : "MEDLEY"}` : limit > 0 ? `${limit} ROUNDS` : "ラウンド無制限"}
+                {type === "match" ? `BEST OF ${legs} ・ ${mode === "hard" ? "LEG MATCH" : "MEDLEY"}` : limit > 0 ? `${limit} ROUNDS` : t("flow.unlimitedRounds")}
                 {kind === "01" || type === "match" ? ` ・ ${mode === "soft" ? "SOFT" : "STEEL"}` : ""}
               </div>
             </div>
 
             {cat === "01" && (
               <div style={{ marginTop: 16 }}>
-                <div style={{ fontSize: 13, color: C.creamDim, margin: "0 0 8px 2px" }}>ゲームを選択してください</div>
+                <div style={{ fontSize: 13, color: C.creamDim, margin: "0 0 8px 2px" }}>{t("flow.selectGame")}</div>
                 <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                   {(mode === "soft" ? ["301", "501", "701", "901", "1101", "1501"] : ["301", "501", "701"]).map((v) => (
                     <button
@@ -442,20 +443,20 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
             )}
             {cat === "practice" && (
               <div style={{ marginTop: 16 }}>
-                <div style={{ fontSize: 13, color: C.creamDim, margin: "0 0 8px 2px" }}>練習メニューを選択してください</div>
+                <div style={{ fontSize: 13, color: C.creamDim, margin: "0 0 8px 2px" }}>{t("flow.selectPracticeMenu")}</div>
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
                   {(mode === "hard"
                     ? [
-                        ["countup", "COUNT-UP", "スコアリング基礎"],
-                        ["atc", "AROUND THE CLOCK", "1→20→ブル"],
-                        ["bob", "BOB'S 27", "ダブル練習"],
-                        ["p121", "121", "チェックアウト挑戦"],
+                        ["countup", "COUNT-UP", t("flow.practice.countupHardSub")],
+                        ["atc", "AROUND THE CLOCK", t("flow.practice.atcSub")],
+                        ["bob", "BOB'S 27", t("flow.practice.bobSub")],
+                        ["p121", "121", t("flow.practice.p121Sub")],
                       ]
                     : [
-                        ["countup", "COUNT-UP", "ブル練習の定番"],
-                        ["crcu", "CRカウントアップ", "クリカン ・ プロ試験種目"],
-                        ["halfit", "HALF-IT", "外すと半減"],
-                        ["shoot", "SHOOT OUT", "陣取り ・ プロ試験種目"],
+                        ["countup", "COUNT-UP", t("flow.practice.countupSoftSub")],
+                        ["crcu", t("flow.practice.crcuLabel"), t("flow.practice.crcuSub")],
+                        ["halfit", "HALF-IT", t("flow.practice.halfitSub")],
+                        ["shoot", "SHOOT OUT", t("flow.practice.shootSub")],
                       ]
                   ).map(([v, label, sub]) => (
                     <button
@@ -484,7 +485,7 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
             {cat === "robo" && (
               <>
                 <div style={{ marginTop: 16 }}>
-                  <div style={{ fontSize: 13, color: C.creamDim, margin: "0 0 8px 2px" }}>ゲームを選択してください</div>
+                  <div style={{ fontSize: 13, color: C.creamDim, margin: "0 0 8px 2px" }}>{t("flow.selectGame")}</div>
                   <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                     {[
                       ["301", "301"],
@@ -520,7 +521,7 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
                   </div>
                 </div>
                 <div style={{ marginTop: 14 }}>
-                  <div style={{ fontSize: 13, color: C.creamDim, margin: "0 0 8px 2px" }}>ロボのレベルを選択してください</div>
+                  <div style={{ fontSize: 13, color: C.creamDim, margin: "0 0 8px 2px" }}>{t("flow.robo.selectLevel")}</div>
                   <div style={{ display: "grid", gridTemplateColumns: "repeat(9, 1fr)", gap: 4 }}>
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((lv) => (
                       <button
@@ -565,7 +566,7 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
             {type === "match" && (
               <>
                 <div style={{ marginTop: 16 }}>
-                  <div style={{ fontSize: 13, color: C.creamDim, margin: "0 0 8px 2px" }}>レグ数を選択してください</div>
+                  <div style={{ fontSize: 13, color: C.creamDim, margin: "0 0 8px 2px" }}>{t("flow.match.selectLegs")}</div>
                   <div style={{ display: "flex", gap: 8 }}>
                     {[3, 5, 7].map((v) => (
                       <button
@@ -586,13 +587,13 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
                         }}
                       >
                         <div style={{ fontFamily: FONT_DISPLAY, fontSize: 19, fontWeight: 600, lineHeight: 1 }}>BEST OF {v}</div>
-                        <div style={{ fontSize: 10, marginTop: 3, opacity: 0.85, fontFamily: FONT_BODY }}>{Math.ceil(v / 2)}レグ先取</div>
+                        <div style={{ fontSize: 10, marginTop: 3, opacity: 0.85, fontFamily: FONT_BODY }}>{t("flow.match.legsToWin", { n: Math.ceil(v / 2) })}</div>
                       </button>
                     ))}
                   </div>
                 </div>
                 <div style={{ marginTop: 14 }}>
-                  <div style={{ fontSize: 13, color: C.creamDim, margin: "0 0 8px 2px" }}>{mode === "hard" ? "レグのゲーム(全レグ共通 ・ スティール標準は501)" : "01レグのゲーム"}</div>
+                  <div style={{ fontSize: 13, color: C.creamDim, margin: "0 0 8px 2px" }}>{mode === "hard" ? t("flow.match.legGameHard") : t("flow.match.legGameSoft")}</div>
                   <div style={{ display: "flex", gap: 8 }}>
                     {["301", "501", "701"].map((v) => (
                       <button
@@ -636,7 +637,7 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
                       </span>,
                     ])}
                   </div>
-                  <div style={{ fontSize: 10.5, color: C.creamDim, marginTop: 7, lineHeight: 1.6 }}>{mode === "hard" ? "スティール標準のレグ形式: 全レグ同じ01を連戦し、先にレグ数を取った方の勝ち" : "CHOICEレグは開始時に01かクリケットをその場で選べます"}</div>
+                  <div style={{ fontSize: 10.5, color: C.creamDim, marginTop: 7, lineHeight: 1.6 }}>{mode === "hard" ? t("flow.match.formatDescHard") : t("flow.match.formatDescSoft")}</div>
                 </div>
               </>
             )}
@@ -653,7 +654,7 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
         {step === 1 && (
           <>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-              <div style={{ fontSize: 13, color: C.creamDim }}>プレイヤー数を選んでください</div>
+              <div style={{ fontSize: 13, color: C.creamDim }}>{t("flow.selectPlayerCount")}</div>
               {cat === "cricket" && (
                 <button
                   onClick={() => {
@@ -678,13 +679,13 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
             </div>
             {cat === "match" && (
               <div style={{ fontSize: 12, color: C.cream, background: C.surface, border: `1px solid ${C.line}`, borderRadius: 10, padding: "9px 12px", marginBottom: 18 }}>
-                マッチは <span style={{ color: TH.accent, fontWeight: 700 }}>1 vs 1</span> の2人対戦です(先攻はレグごとに交代)
+                {t("flow.match.introPre")}<span style={{ color: TH.accent, fontWeight: 700 }}>1 vs 1</span>{t("flow.match.introPost")}
               </div>
             )}
             {cat === "robo" && (
               <div style={{ fontSize: 12, color: C.cream, background: C.surface, border: `1px solid ${C.line}`, borderRadius: 10, padding: "9px 12px", marginBottom: 18 }}>
-                <span style={{ color: TH.accent, fontWeight: 700 }}>ROBO Lv.{roboLv}</span> との1vs1対戦です。あなたのプレイヤーを設定してください
-                {roboGame === "match" && <span>({mode === "hard" ? "レグ戦" : "メドレー"}: 先攻はレグごとに交代)</span>}
+                <span style={{ color: TH.accent, fontWeight: 700 }}>ROBO Lv.{roboLv}</span>{t("flow.robo.introPost")}
+                {roboGame === "match" && <span>{t("flow.robo.formatNote", { format: mode === "hard" ? t("flow.robo.formatHard") : t("flow.robo.formatSoft") })}</span>}
               </div>
             )}
             <div style={{ display: cat === "match" || cat === "robo" ? "none" : "flex", gap: 6, marginBottom: 18 }}>
@@ -716,7 +717,7 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
               ))}
             </div>
             {teamLocked && (
-              <div style={{ fontSize: 11.5, color: C.creamDim, margin: "0 2px 10px" }}>入力順 = 投げ順。1・3人目がTEAM A、2・4人目がTEAM B</div>
+              <div style={{ fontSize: 11.5, color: C.creamDim, margin: "0 2px 10px" }}>{t("flow.team.orderNote")}</div>
             )}
             <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
               {names.map((p, i) => {
@@ -776,7 +777,7 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
                           }}
                           style={{ padding: "5px 11px", fontSize: 12, fontWeight: 700 }}
                         >
-                          選ぶ
+                          {t("flow.pickButton")}
                         </Btn>
                       </>
                     )}
@@ -800,7 +801,7 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
               </div>
             )}
             <div style={{ fontSize: 10.5, color: C.creamDim, margin: "8px 2px 0", lineHeight: 1.6 }}>
-              「選ぶ」で登録プレイヤーを設定すると、スタッツとレーティング(Rt)が自動で記録されます
+              {t("flow.pickHint", { pick: t("flow.pickButton") })}
             </div>
 
             {pickerFor != null && (
@@ -816,7 +817,7 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
                 onEdit={(prof) => setEditing({ profile: prof })}
                 onDelete={(id) => {
                   deleteProfile(id);
-                  setNames((ns) => ns.map((p, j) => (p.pid === id ? { name: `プレイヤー ${j + 1}`, pid: null, avatar: null } : p)));
+                  setNames((ns) => ns.map((p, j) => (p.pid === id ? { name: t("flow.defaultPlayerName", { n: j + 1 }), pid: null, avatar: null } : p)));
                 }}
                 onClose={() => setPickerFor(null)}
               />
@@ -854,10 +855,10 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
             <div style={{ background: C.surface, border: `1px solid ${C.line}`, borderRadius: 14, padding: 16 }}>
               <div style={{ fontFamily: FONT_DISPLAY, fontSize: 24, fontWeight: 700, letterSpacing: "0.08em", color: TH.accent }}>{gameTitle}</div>
               <div style={{ fontSize: 12, color: C.creamDim, marginTop: 6, lineHeight: 1.8 }}>
-                {limit > 0 ? `${limit} ROUNDS` : "ラウンド無制限"}
+                {limit > 0 ? `${limit} ROUNDS` : t("flow.unlimitedRounds")}
                 {kind !== "cricket" && ` ・ BULL ${sepaBull ? "25/50" : "50/50"}`}
                 {(kind === "01" || kind === "match") && ` ・ IN ${inRule === "double" ? "DOUBLE" : "OPEN"} ・ OUT ${outRule === "double" ? "DOUBLE" : outRule === "master" ? "MASTER" : "OPEN"}`}
-                {teamLocked && " ・ 2vs2 チーム戦"}
+                {teamLocked && t("flow.teamBadge")}
               </div>
               <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 10 }}>
                 {(cat === "robo" ? fullPlayers() : names).map((p, i) => (
@@ -884,16 +885,16 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
             {(kind === "atc" || kind === "bob" || kind === "p121" || kind === "crcu" || kind === "halfit" || kind === "shoot") && (
               <div style={{ fontSize: 10.5, color: C.creamDim, marginTop: 12, lineHeight: 1.7, textAlign: "center" }}>
                 {kind === "atc"
-                  ? "ルール固定: シングル=1つ / ダブル=2つ / トリプル=3つ進む"
+                  ? t("flow.ruleFixed.atc")
                   : kind === "bob"
-                  ? "ルール固定: 各ダブルに3投 ・ 全外しで減点 ・ 0未満で即終了"
+                  ? t("flow.ruleFixed.bob")
                   : kind === "p121"
-                  ? "ルール固定: ダブルアウト ・ 1挑戦=9投 ・ 成功+1 / 失敗-1 ・ 全10挑戦"
+                  ? t("flow.ruleFixed.p121")
                   : kind === "crcu"
-                  ? "ルール固定: 8ラウンド ・ ターゲット順 20→…→15→ブル×2 ・ 刺さった点数を加算(T20=60)"
+                  ? t("flow.ruleFixed.crcu")
                   : kind === "shoot"
-                  ? "ルール固定: 8R ・ 得点=刺さった点数×開いたエリア数 ・ 全21エリア開拓でブル復活(×21)"
-                  : "ルール固定: 開始40点 ・ 9ラウンド ・ 全外しで半減(切り上げ)"}
+                  ? t("flow.ruleFixed.shoot")
+                  : t("flow.ruleFixed.halfit")}
               </div>
             )}
 
@@ -976,7 +977,7 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
               >
                 <div style={{ width: "100%", maxWidth: 420, background: C.surface, border: `1.5px solid ${TH.accent}`, borderRadius: 18, padding: "20px 18px" }}>
                   <div style={{ textAlign: "center", fontFamily: FONT_DISPLAY, fontSize: 15, letterSpacing: "0.25em", color: TH.accent }}>SHUFFLE RESULT</div>
-                  <div style={{ textAlign: "center", fontSize: 12, color: C.creamDim, marginTop: 4, marginBottom: 14 }}>投げ順が決まりました!</div>
+                  <div style={{ textAlign: "center", fontSize: 12, color: C.creamDim, marginTop: 4, marginBottom: 14 }}>{t("flow.shuffle.resultDecided")}</div>
                   <div key={shuffled.key} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                     {shuffled.players.map((p, i) => (
                       <div
@@ -1007,11 +1008,11 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
                     onClick={() => launch(shuffled.players)}
                     style={{ marginTop: 16, width: "100%", padding: "14px 0", borderRadius: 12, border: "none", cursor: "pointer", background: TH.accent, color: "#fff", fontFamily: FONT_DISPLAY, fontSize: 18, fontWeight: 700, letterSpacing: "0.15em" }}
                   >
-                    この順番でスタート →
+                    {t("flow.startInOrder")}
                   </button>
                   <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
                     <Btn onClick={doShuffle} style={{ flex: 1, fontSize: 13 }}>
-                      🔀 もう一度
+                      {t("flow.shuffle.retry")}
                     </Btn>
                     <Btn
                       onClick={() => {
@@ -1020,7 +1021,7 @@ export function Flow({ cat, mode, profiles, upsertProfile, deleteProfile, onHome
                       }}
                       style={{ flex: 1, fontSize: 13, color: C.creamDim }}
                     >
-                      キャンセル
+                      {t("flow.cancel")}
                     </Btn>
                   </div>
                 </div>
