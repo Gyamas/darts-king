@@ -1,4 +1,5 @@
 import { CATS } from "../constants.js";
+import { t } from "../i18n.js";
 import { UI } from "../sound.js";
 import { C, FONT_DISPLAY } from "../theme.js";
 import { Avatar, Btn } from "../ui/kit.jsx";
@@ -10,8 +11,8 @@ export function ChoiceScreen({ m, onPick }) {
   const legNo = m.cur + 1;
   const first = m.base.names[m.cur % 2]; // このレグの先攻
   const opts = [
-    { t: m.base.zeroOne || "701", label: m.base.zeroOne || "701", sub: "ゼロワン", color: CATS["01"].accent },
-    { t: "cricket", label: "CRICKET", sub: "クリケット", color: CATS.cricket.accent },
+    { kind: m.base.zeroOne || "701", label: m.base.zeroOne || "701", sub: t("match.zeroOneSub"), color: CATS["01"].accent },
+    { kind: "cricket", label: "CRICKET", sub: t("match.cricketSub"), color: CATS.cricket.accent },
   ];
   return (
     <div style={{ position: "fixed", inset: 0, zIndex: 70, background: "#0C0E11", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: 20 }}>
@@ -20,17 +21,17 @@ export function ChoiceScreen({ m, onPick }) {
       </div>
       <div className="gameon" style={{ fontFamily: FONT_DISPLAY, fontSize: 44, fontWeight: 700, letterSpacing: "0.15em", color: C.cream, marginTop: 6 }}>CHOICE</div>
       <div style={{ fontSize: 12.5, color: C.creamDim, marginTop: 10, textAlign: "center", lineHeight: 1.7 }}>
-        最終レグのゲームを選んでください
+        {t("match.choice.selectGame")}
         <br />
-        (このレグの先攻: <span style={{ color: C.cream, fontWeight: 700 }}>{first}</span>)
+        {t("match.choice.firstThrowPre")}<span style={{ color: C.cream, fontWeight: 700 }}>{first}</span>{t("match.choice.firstThrowPost")}
       </div>
       <div style={{ display: "flex", gap: 12, marginTop: 22, width: "100%", maxWidth: 380 }}>
         {opts.map((o) => (
           <button
-            key={o.t}
+            key={o.kind}
             onClick={() => {
               UI.startGame();
-              onPick(o.t);
+              onPick(o.kind);
             }}
             style={{ flex: 1, padding: "22px 0 18px", borderRadius: 16, cursor: "pointer", background: C.surface, border: `2px solid ${o.color}`, textAlign: "center" }}
           >
@@ -64,7 +65,7 @@ export function MatchResult({ m, onRematch, onHome }) {
         <Avatar avatar={m.base.avatars && m.base.avatars[w]} size={84} />
       </div>
       <div style={{ fontFamily: FONT_DISPLAY, fontSize: 32, fontWeight: 700, color: C.cream, marginTop: 10 }}>{m.base.names[w]}</div>
-      <div style={{ fontSize: 13, color: C.creamDim, marginTop: 2 }}>マッチ勝利! 🏆</div>
+      <div style={{ fontSize: 13, color: C.creamDim, marginTop: 2 }}>{t("match.victory")}</div>
       <div style={{ fontFamily: FONT_DISPLAY, fontSize: 56, fontWeight: 700, color: accent, marginTop: 14, lineHeight: 1, fontVariantNumeric: "tabular-nums" }}>
         {m.wins[0]} - {m.wins[1]}
       </div>
@@ -96,7 +97,7 @@ export function MatchResult({ m, onRematch, onHome }) {
           }}
           style={{ flex: 1, background: accent, border: "none", fontWeight: 700, color: "#fff" }}
         >
-          もう一度
+          {t("game.playAgain")}
         </Btn>
         <Btn
           onClick={() => {
@@ -105,7 +106,7 @@ export function MatchResult({ m, onRematch, onHome }) {
           }}
           style={{ flex: 1 }}
         >
-          ホームへ
+          {t("game.goHome")}
         </Btn>
       </div>
     </div>

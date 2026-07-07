@@ -192,6 +192,13 @@ export const DICTS = {
     "players.picker.deleteConfirm": "スタッツごと削除します。よろしいですか?",
     "players.picker.delete": "削除",
     "players.picker.deleteCancel": "やめる",
+
+    "match.zeroOneSub": "ゼロワン",
+    "match.cricketSub": "クリケット",
+    "match.choice.selectGame": "最終レグのゲームを選んでください",
+    "match.choice.firstThrowPre": "(このレグの先攻: ",
+    "match.choice.firstThrowPost": ")",
+    "match.victory": "マッチ勝利! 🏆",
   },
   en: {},
 };
