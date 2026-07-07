@@ -4,6 +4,7 @@ import { dartLabel, isDeadNumber, isFatBull } from "../engine/board.js";
 import { checkoutRoute } from "../engine/checkout.js";
 import { applyDart, detectAward, endTurn } from "../engine/game.js";
 import { roboThrow } from "../engine/robo.js";
+import { t } from "../i18n.js";
 import { RATING_MODE } from "../profiles.js";
 import { SFX, UI, oneEightySound, playHit } from "../sound.js";
 import { C, FONT_BODY, FONT_DISPLAY } from "../theme.js";
@@ -53,18 +54,18 @@ export function PlayerPanel({ g, i, accent }) {
       </div>
       {g.kind === "atc" && (
         <div style={{ fontSize: 10, color: C.creamDim, marginTop: 2 }}>
-          {g.atc[i] >= 22 ? "完走!" : `次のターゲット ・ ${Math.min(g.atc[i] - 1, 20)}/20${g.atc[i] >= 21 ? "+B" : ""}`}
+          {g.atc[i] >= 22 ? t("game.atc.finished") : t("game.atc.nextTarget", { next: Math.min(g.atc[i] - 1, 20), plus: g.atc[i] >= 21 ? "+B" : "" })}
         </div>
       )}
       {g.kind === "bob" && (
         <div style={{ fontSize: 10, marginTop: 2 }}>
           {g.bobOut[i] ? (
-            <span style={{ color: C.red, fontWeight: 700 }}>BUST ・ 脱落</span>
+            <span style={{ color: C.red, fontWeight: 700 }}>{t("game.bob.bust")}</span>
           ) : g.bobT[i] > 21 ? (
-            <span style={{ color: C.brass, fontWeight: 700 }}>完走! 🏁</span>
+            <span style={{ color: C.brass, fontWeight: 700 }}>{t("game.bob.finished")}</span>
           ) : (
             <span style={{ color: C.creamDim }}>
-              狙い: <span style={{ color: C.cream, fontWeight: 700, fontFamily: FONT_DISPLAY }}>{g.bobT[i] === 21 ? "D-BULL" : `D${g.bobT[i]}`}</span> ({g.bobT[i]}/21)
+              {t("game.aimPrefix")}<span style={{ color: C.cream, fontWeight: 700, fontFamily: FONT_DISPLAY }}>{g.bobT[i] === 21 ? "D-BULL" : `D${g.bobT[i]}`}</span> ({g.bobT[i]}/21)
             </span>
           )}
         </div>
@@ -75,27 +76,27 @@ export function PlayerPanel({ g, i, accent }) {
         return (
           <div style={{ fontSize: 10, color: C.creamDim, marginTop: 2 }}>
             MPR <span style={{ color: C.cream, fontWeight: 700 }}>{dn ? ((g.crcuMarks[i] / dn) * 3).toFixed(2) : "-"}</span>
-            {" "}({g.crcuMarks[i]}マーク)
+            {" "}({g.crcuMarks[i]}{t("game.marksUnit")})
           </div>
         );
       })()}
       {g.kind === "shoot" && (
         <div style={{ fontSize: 10, color: C.creamDim, marginTop: 2 }}>
           {g.shootOpen[i].length >= 21 ? (
-            <span style={{ color: C.red, fontWeight: 700 }}>BULLチャレンジ ×21</span>
+            <span style={{ color: C.red, fontWeight: 700 }}>{t("game.shoot.bullChallenge")}</span>
           ) : (
-            `${g.shootOpen[i].length}/21エリア ・ 次×${g.shootOpen[i].length + 1}`
+            t("game.shoot.progress", { opened: g.shootOpen[i].length, next: g.shootOpen[i].length + 1 })
           )}
         </div>
       )}
       {g.kind === "halfit" && !g.finished && (
         <div style={{ fontSize: 10, color: C.creamDim, marginTop: 2 }}>
-          R{g.round}/{HALFIT_SEQ.length} ・ 狙い: <span style={{ color: C.cream, fontWeight: 700 }}>{halfitLabel(HALFIT_SEQ[g.round - 1])}</span>
+          R{g.round}/{HALFIT_SEQ.length} ・ {t("game.aimPrefix")}<span style={{ color: C.cream, fontWeight: 700 }}>{halfitLabel(HALFIT_SEQ[g.round - 1])}</span>
         </div>
       )}
       {g.kind === "p121" && (
         <div style={{ fontSize: 10, color: C.creamDim, marginTop: 2 }}>
-          TARGET {g.p121T[i]} ・ 挑戦{Math.min(g.p121N[i] + 1, P121_CHALLENGES)}/{P121_CHALLENGES} ・ ターン{g.p121Turn[i] + 1}/3
+          {t("game.p121.status", { target: g.p121T[i], cur: Math.min(g.p121N[i] + 1, P121_CHALLENGES), total: P121_CHALLENGES, turn: g.p121Turn[i] + 1 })}
           {g.p121Best[i] > 0 ? ` ・ BEST ${g.p121Best[i]}` : ""}
         </div>
       )}
@@ -212,7 +213,7 @@ export function CheckoutBar({ g }) {
           ])}
         </div>
       ) : (
-        <span style={{ fontSize: 11.5, color: C.creamDim }}>ノーフィニッシュ(この残りでは1ターンで上がれません)</span>
+        <span style={{ fontSize: 11.5, color: C.creamDim }}>{t("game.checkout.noFinish")}</span>
       )}
     </div>
   );
@@ -385,7 +386,7 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
           }}
           style={{ padding: "6px 12px", fontSize: 12, color: C.creamDim }}
         >
-          ← 終了
+          {t("game.quit")}
         </Btn>
         <div style={{ textAlign: "center" }}>
           <div style={{ fontFamily: FONT_DISPLAY, fontSize: 18, letterSpacing: "0.15em", color: TH.accent, lineHeight: 1.1 }}>
@@ -492,11 +493,11 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
               color: g.darts[i] ? C.cream : C.creamDim,
             }}
           >
-            {g.darts[i] ? g.darts[i].label : `${i + 1}投目`}
+            {g.darts[i] ? g.darts[i].label : t("game.dartOrdinal", { n: i + 1 })}
           </div>
         ))}
         <Btn onClick={undo} disabled={!history.length || isRoboTurn} style={{ fontSize: 12, padding: "10px 12px" }}>
-          ↩ 戻す
+          {t("game.undo")}
         </Btn>
       </div>
 
@@ -508,7 +509,7 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
 
       {!g.finished && g.kind === "01" && g.inRule === "double" && !g.opened[g.current] && (
         <div style={{ marginTop: 8, textAlign: "center", color: C.creamDim, fontSize: 12 }}>
-          ダブルイン待ち ー ダブルに入れるまで得点しません
+          {t("game.doubleInWait")}
         </div>
       )}
 
@@ -531,7 +532,7 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
             {g.winners.map(winnerName).join(" / ")}
           </div>
           <div style={{ fontSize: 13, color: C.creamDim }}>
-            {g.players.length === 1 ? "おつかれさまでした 🎯" : g.winners.length > 1 ? "引き分けです" : "の勝利です 🎯"}
+            {g.players.length === 1 ? t("game.result.soloFinish") : g.winners.length > 1 ? t("game.result.draw") : t("game.result.winnerSuffix")}
           </div>
 
           {/* このゲームのプレイヤー別スタッツ */}
@@ -609,10 +610,10 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
                         <div style={{ fontSize: 9.5, color: C.creamDim, marginTop: 2 }}>F9 MPR {st.r9 ? (st.m9 / st.r9).toFixed(2) : "-"}</div>
                       )}
                       {g.kind === "crcu" && (
-                        <div style={{ fontSize: 9.5, color: C.creamDim, marginTop: 2 }}>MPR {st.darts ? ((g.crcuMarks[i] / st.darts) * 3).toFixed(2) : "-"} ・ {g.crcuMarks[i]}マーク</div>
+                        <div style={{ fontSize: 9.5, color: C.creamDim, marginTop: 2 }}>MPR {st.darts ? ((g.crcuMarks[i] / st.darts) * 3).toFixed(2) : "-"} ・ {g.crcuMarks[i]}{t("game.marksUnit")}</div>
                       )}
                       {g.kind === "shoot" && (
-                        <div style={{ fontSize: 9.5, color: C.creamDim, marginTop: 2 }}>{g.shootOpen[i].length}/21エリア開拓</div>
+                        <div style={{ fontSize: 9.5, color: C.creamDim, marginTop: 2 }}>{t("game.shoot.areasOpened", { n: g.shootOpen[i].length })}</div>
                       )}
                     </div>
                     <div style={{ fontSize: 10.5, color: C.creamDim, fontVariantNumeric: "tabular-nums" }}>
@@ -628,7 +629,7 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
               })}
             </div>
             {g.profileIds && g.profileIds.some(Boolean) && (
-              <div style={{ fontSize: 10, color: C.creamDim, marginTop: 8 }}>登録プレイヤーの累計スタッツ・Rtに反映済み</div>
+              <div style={{ fontSize: 10, color: C.creamDim, marginTop: 8 }}>{t("game.statsRecorded")}</div>
             )}
           </div>
 
@@ -642,10 +643,10 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
                 style={{ flex: 2, background: CATS.match.accent, border: "none", fontWeight: 700, color: "#fff" }}
               >
                 {g.winners.length > 1
-                  ? "同じレグを再戦"
+                  ? t("game.match.rematchSameLeg")
                   : g.match.wins[g.winners[0]] + 1 >= g.match.need
-                  ? "マッチ結果へ 🏆"
-                  : `次のレグへ(LEG ${g.match.legNo + 1})`}
+                  ? t("game.match.toResult")
+                  : t("game.match.nextLeg", { n: g.match.legNo + 1 })}
               </Btn>
             ) : (
               <Btn
@@ -655,7 +656,7 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
                 }}
                 style={{ flex: 1, background: TH.accent, border: "none", fontWeight: 700, color: "#fff" }}
               >
-                もう一度
+                {t("game.playAgain")}
               </Btn>
             )}
             <Btn
@@ -665,7 +666,7 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
               }}
               style={{ flex: 1 }}
             >
-              {g.match ? "マッチ中断" : "ホームへ"}
+              {g.match ? t("game.match.abort") : t("game.goHome")}
             </Btn>
           </div>
         </div>
@@ -674,7 +675,7 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
           className="robopulse"
           style={{ marginTop: 12, width: "100%", padding: "14px 0", borderRadius: 12, textAlign: "center", background: "rgba(139,92,246,0.13)", border: `1.5px solid ${CATS.robo.accent}`, color: CATS.robo.accent, fontFamily: FONT_DISPLAY, fontSize: 14, letterSpacing: "0.15em", fontWeight: 700 }}
         >
-          🤖 ROBO Lv.{g.robo.lv} スローイング…
+          {t("game.robo.throwing", { lv: g.robo.lv })}
         </div>
       ) : turnOver ? (
         <button
@@ -694,7 +695,7 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
             letterSpacing: "0.12em",
           }}
         >
-          次のプレイヤーへ →
+          {t("game.nextPlayer")}
         </button>
       ) : null}
 
@@ -712,19 +713,19 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
             {g.kind === "halfit"
               ? halfitLabel(HALFIT_SEQ[Math.min(g.round, HALFIT_SEQ.length) - 1])
               : (() => {
-                  const t = CRCU_SEQ[Math.min(g.round, CRCU_SEQ.length) - 1];
-                  return t === "B" ? "BULL" : String(t);
+                  const seqT = CRCU_SEQ[Math.min(g.round, CRCU_SEQ.length) - 1];
+                  return seqT === "B" ? "BULL" : String(seqT);
                 })()}
           </span>
           <span style={{ fontSize: 10.5, color: C.creamDim }}>
-            {g.kind === "halfit" ? "外すと半減!" : `R${g.round}/8`}
+            {g.kind === "halfit" ? t("game.halveWarning") : `R${g.round}/8`}
           </span>
         </div>
       )}
       {!g.finished && g.kind === "shoot" && (g.shootOpen[g.current].length >= 21 ? (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginTop: 12, padding: "8px 12px", borderRadius: 10, background: `linear-gradient(0deg, rgba(201,72,60,0.14), rgba(201,72,60,0.14)), ${C.surface}`, border: `1.5px solid ${C.red}` }}>
-          <span className="hitpop" style={{ fontFamily: FONT_DISPLAY, fontSize: 16, fontWeight: 700, color: C.red, letterSpacing: "0.1em", display: "inline-block" }}>🎯 BULLチャレンジ!</span>
-          <span style={{ fontSize: 10.5, color: C.cream }}>ブル復活 ・ 毎投 <span style={{ color: C.brass, fontWeight: 700 }}>×21</span></span>
+          <span className="hitpop" style={{ fontFamily: FONT_DISPLAY, fontSize: 16, fontWeight: 700, color: C.red, letterSpacing: "0.1em", display: "inline-block" }}>{t("game.shoot.bullChallengeBanner")}</span>
+          <span style={{ fontSize: 10.5, color: C.cream }}>{t("game.shoot.bullRevived")}<span style={{ color: C.brass, fontWeight: 700 }}>×21</span></span>
         </div>
       ) : (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, marginTop: 12, padding: "8px 12px", borderRadius: 10, background: `linear-gradient(0deg, rgba(47,165,108,0.10), rgba(47,165,108,0.10)), ${C.surface}`, border: `1px solid ${CATS.practice.accent}66` }}>
@@ -732,7 +733,7 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
           <span key={g.shootOpen[g.current].length} className="hitpop" style={{ fontFamily: FONT_DISPLAY, fontSize: 18, fontWeight: 700, color: C.brass, display: "inline-block" }}>
             ×{g.shootOpen[g.current].length + 1}
           </span>
-          <span style={{ fontSize: 10.5, color: C.creamDim }}>残り{21 - g.shootOpen[g.current].length}エリア ・ 開けた所は無効</span>
+          <span style={{ fontSize: 10.5, color: C.creamDim }}>{t("game.shoot.remainingAreas", { n: 21 - g.shootOpen[g.current].length })}</span>
         </div>
       ))}
 
@@ -741,8 +742,8 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
         <div style={{ position: "relative" }}>
           <div style={{ display: "flex", gap: 6, marginTop: 12 }}>
             {[
-              ["board", "🎯 ボード入力"],
-              ["pad", "🔢 テンキー入力"],
+              ["board", t("game.input.board")],
+              ["pad", t("game.input.keypad")],
             ].map(([m, label]) => (
               <button
                 key={m}
@@ -783,7 +784,7 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
                 disabled={turnOver}
                 style={{ width: "100%", marginTop: 4, color: C.creamDim, letterSpacing: "0.2em", fontFamily: FONT_DISPLAY }}
               >
-                MISS(ボード外)
+                {t("game.input.missOutside")}
               </Btn>
             </>
           ) : (
