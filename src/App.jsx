@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { CATS, deep, kindKey, medleySeq } from "./constants.js";
 import { newGame } from "./engine/game.js";
+import { getLang, onLangChange, setLang } from "./i18n.js";
 import { ensureModes, loadProfiles, loadSettings, saveProfiles, saveSettings, setRatingModeGlobal, setStatsMode } from "./profiles.js";
 import { Flow, GameOnSplash } from "./screens/flow.jsx";
 import { Game } from "./screens/game.jsx";
@@ -25,13 +26,20 @@ export default function DartsScorer() {
   const [savedGid, setSavedGid] = useState(null);
   const [match, setMatch] = useState(null); // メドレーマッチの進行状態
   const [ratingMode, setRatingMode] = useState("dl"); // レーティング表示方式
+  const [, forceLangRender] = useState(0); // onLangChange購読による再レンダ用
 
+  useEffect(() => onLangChange(() => forceLangRender((n) => n + 1)), []);
   useEffect(() => {
     loadProfiles().then(setProfiles);
     loadSettings().then((st) => {
       if (st.ratingMode) {
         setRatingModeGlobal(st.ratingMode);
         setRatingMode(st.ratingMode);
+      }
+      if (st.lang) {
+        setLang(st.lang);
+      } else if (typeof navigator !== "undefined" && navigator.language && !navigator.language.startsWith("ja")) {
+        setLang("en");
       }
     });
   }, []);
@@ -40,7 +48,11 @@ export default function DartsScorer() {
   const changeRatingMode = (m) => {
     setRatingModeGlobal(m);
     setRatingMode(m);
-    saveSettings({ ratingMode: m });
+    saveSettings({ ratingMode: m, lang: getLang() });
+  };
+  const changeLang = (l) => {
+    setLang(l);
+    saveSettings({ ratingMode, lang: l });
   };
 
   const upsertProfile = (prof) => {
@@ -288,6 +300,8 @@ export default function DartsScorer() {
           deleteProfile={deleteProfile}
           ratingMode={ratingMode}
           onRatingMode={changeRatingMode}
+          lang={getLang()}
+          onLang={changeLang}
           appMode={mode}
           onHome={goHome}
         />
