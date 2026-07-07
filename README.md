@@ -27,7 +27,7 @@ src/
 ├── constants.js          # ゲーム定義・カテゴリ・各種シーケンス
 ├── sound.js              # Web Audio合成SE(電子音系 / 木・スティール系)
 ├── profiles.js           # プロフィール・レーティング(DL/PX)・スタッツ枝
-├── storage.js            # window.storage互換のlocalStorageアダプタ
+├── storage.js            # window.storage互換アダプタ(Web=localStorage / ネイティブ=Capacitor Preferences)
 ├── engine/               # 純関数ゲームエンジン(UI非依存・全てテスト対象)
 │   ├── game.js           #   newGame / applyDart / endTurn / アワード判定
 │   ├── checkout.js       #   定石チャートとルート解決
@@ -64,6 +64,36 @@ npm run dev      # 開発サーバー(ホットリロード)
 npm test         # テスト
 npm run build    # 本番ビルド → dist/
 npm run preview  # ビルドのローカル確認
+```
+
+## 📱 ネイティブビルド(Capacitor)
+
+App Store / Google Play 配布用のiOS/Androidプロジェクトは `ios/` `android/` に生成済み(`capacitor.config.json`、appId: `com.gyamas.dartsking`)。
+
+**アイコン/スプラッシュの生成**
+
+1. `assets/icon.png`(1024×1024)と `assets/splash.png`(2732×2732)を用意して配置(このリポジトリには未同梱)
+2. 生成を実行:
+
+```bash
+npx capacitor-assets generate
+npx cap sync
+```
+
+iOS/Android両方のアイコン・スプラッシュ画像一式が自動生成され、`ios/` `android/` 配下に反映される。
+
+**ビルド**
+
+```bash
+npm run build && npx cap sync   # dist/ をネイティブプロジェクトへ反映
+npx cap open ios                # Xcodeで開く(要Xcode + 実機/シミュレータ)
+npx cap open android            # Android Studioで開く(要JDK + Android SDK)
+```
+
+Android CLIのみでビルドする場合:
+
+```bash
+cd android && ./gradlew assembleDebug
 ```
 
 ## 📦 公開手順
