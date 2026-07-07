@@ -1,4 +1,5 @@
 import { HOME_TILES, SOON_CATS, catOf } from "../constants.js";
+import { t } from "../i18n.js";
 import { RATING_MODE } from "../profiles.js";
 import { UI } from "../sound.js";
 import { C, FONT_BODY, FONT_DISPLAY, setAppTheme } from "../theme.js";
@@ -17,13 +18,13 @@ export function Home({ mode, setMode, onPick, onPlayers, sound, toggleSound }) {
         <div style={{ fontFamily: FONT_DISPLAY, fontWeight: 700, fontSize: 44, letterSpacing: "0.12em", color: C.cream, lineHeight: 1 }}>
           DARTS<span style={{ color: C.red }}> KING</span>
         </div>
-        <div style={{ color: C.creamDim, fontSize: 13, marginTop: 8, letterSpacing: "0.2em" }}>練習・対戦・レーティング</div>
+        <div style={{ color: C.creamDim, fontSize: 13, marginTop: 8, letterSpacing: "0.2em" }}>{t("home.subtitle")}</div>
       </div>
 
       <div style={{ display: "flex", gap: 8, marginBottom: 6 }}>
         {[
-          ["hard", "🎯 ハードダーツ"],
-          ["soft", "🕹 ソフトダーツ"],
+          ["hard", t("home.modeHard")],
+          ["soft", t("home.modeSoft")],
         ].map(([m, label]) => (
           <button
             key={m}
@@ -51,11 +52,11 @@ export function Home({ mode, setMode, onPick, onPlayers, sound, toggleSound }) {
       </div>
       <div style={{ fontSize: 11.5, color: C.creamDim, margin: "0 2px 18px", lineHeight: 1.6 }}>
         {mode === "soft"
-          ? `Rt・${RATING_MODE === "px" ? "100%" : "80%"}スタッツ ・ メドレーマッチ ・ アワード演出 ・ プロ試験練習`
-          : "501ダブルアウト ・ AVG&アウト提案 ・ レグ戦マッチ ・ 180コール"}
+          ? t("home.descSoft", { pct: RATING_MODE === "px" ? "100" : "80" })
+          : t("home.descHard")}
       </div>
 
-      <div style={{ fontSize: 13, color: C.creamDim, margin: "0 0 8px 2px" }}>ゲームカテゴリ</div>
+      <div style={{ fontSize: 13, color: C.creamDim, margin: "0 0 8px 2px" }}>{t("home.gameCategory")}</div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
         {HOME_TILES.map((k) => {
           const ct = catOf(k);
@@ -81,14 +82,14 @@ export function Home({ mode, setMode, onPick, onPlayers, sound, toggleSound }) {
             >
               {soon && (
                 <div style={{ position: "absolute", top: 10, right: 10, fontSize: 9.5, fontFamily: FONT_BODY, fontWeight: 700, color: "#1A1C20", background: C.brass, borderRadius: 6, padding: "2px 7px" }}>
-                  準備中
+                  {t("home.comingSoon")}
                 </div>
               )}
               <CatIcon cat={k} color={ct.accent} />
               <div style={{ fontFamily: FONT_DISPLAY, fontSize: 19, fontWeight: 600, letterSpacing: "0.06em", color: ct.accent, marginTop: 8, lineHeight: 1.1 }}>
                 {ct.label}
               </div>
-              <div style={{ fontSize: 11.5, color: C.cream, marginTop: 2, fontFamily: FONT_BODY }}>{k === "match" && mode === "hard" ? "マッチ(01連戦)" : ct.jp}</div>
+              <div style={{ fontSize: 11.5, color: C.cream, marginTop: 2, fontFamily: FONT_BODY }}>{k === "match" && mode === "hard" ? t("home.matchTileHard") : ct.jp}</div>
               <div style={{ fontSize: 9, color: C.creamDim, letterSpacing: "0.22em", fontFamily: FONT_DISPLAY, marginTop: 5 }}>{k === "match" && mode === "hard" ? "LEG MATCH" : ct.tagline}</div>
             </button>
           );
@@ -105,7 +106,7 @@ export function Home({ mode, setMode, onPick, onPlayers, sound, toggleSound }) {
         <div style={{ width: 38, height: 38, borderRadius: 10, background: "rgba(201,160,53,0.15)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 19 }}>👤</div>
         <div style={{ flex: 1 }}>
           <div style={{ fontFamily: FONT_DISPLAY, fontSize: 17, fontWeight: 600, letterSpacing: "0.08em", color: C.brass }}>PLAYER DATA</div>
-          <div style={{ fontSize: 11, color: C.creamDim, marginTop: 1 }}>登録プレイヤーの成績・Rt・スタッツを見る</div>
+          <div style={{ fontSize: 11, color: C.creamDim, marginTop: 1 }}>{t("home.playerDataDesc")}</div>
         </div>
         <div style={{ color: C.creamDim, fontSize: 16 }}>›</div>
       </button>
