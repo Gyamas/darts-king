@@ -1,0 +1,16 @@
+{
+  "appId": "com.gyamas.dartsking",
+  "appName": "Darts King",
+  "webDir": "dist",
+  "backgroundColor": "#26190E",
+  "ios": {
+    "contentInset": "never"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "backgroundColor": "#26190E",
+      "launchAutoHide": true,
+      "launchFadeOutDuration": 300
+    }
+  }
+}
