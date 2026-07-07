@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { CATS, CRCU_SEQ, CRICKET_NUMS, GAMES, HALFIT_SEQ, P121_CHALLENGES, deep, halfitLabel, kindKey } from "../constants.js";
+import { CATS, CRCU_SEQ, CRICKET_NUMS, HALFIT_SEQ, P121_CHALLENGES, deep, halfitLabel, kindKey } from "../constants.js";
 import { dartLabel, isDeadNumber, isFatBull } from "../engine/board.js";
 import { checkoutRoute } from "../engine/checkout.js";
 import { applyDart, detectAward, endTurn } from "../engine/game.js";
@@ -390,7 +390,7 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
         </Btn>
         <div style={{ textAlign: "center" }}>
           <div style={{ fontFamily: FONT_DISPLAY, fontSize: 18, letterSpacing: "0.15em", color: TH.accent, lineHeight: 1.1 }}>
-            {GAMES[g.type].name}
+            {t("gameName." + g.type)}
             {g.teamCricket ? " 2vs2" : ""}
             {g.kind === "01" && g.outRule === "double" ? " ・ D-OUT" : g.kind === "01" && g.outRule === "master" ? " ・ M-OUT" : ""}
             {g.kind === "01" && g.inRule === "double" ? " ・ D-IN" : ""}
