@@ -199,6 +199,12 @@ export const DICTS = {
     "match.choice.firstThrowPre": "(このレグの先攻: ",
     "match.choice.firstThrowPost": ")",
     "match.victory": "マッチ勝利! 🏆",
+
+    "ui.ratingMode.dl": "DARTSLIVE方式",
+    "ui.ratingMode.dlSub": "Rt 1〜18 ・ フライト",
+    "ui.ratingMode.px": "PHOENIX方式",
+    "ui.ratingMode.pxSub": "Rt 1〜30 ・ クラス",
+    "ui.ratingMode.hint": "換算方式の表示切替です。記録データは共通なのでいつでも変更できます",
   },
   en: {},
 };

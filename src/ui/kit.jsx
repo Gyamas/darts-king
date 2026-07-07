@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { t } from "../i18n.js";
 import { AVATAR_COLORS } from "../profiles.js";
 import { UI } from "../sound.js";
 import { C, FONT_BODY, FONT_DISPLAY } from "../theme.js";
@@ -117,8 +118,8 @@ export function RatingModeToggle({ ratingMode, onRatingMode }) {
     <div>
       <div style={{ display: "flex", gap: 6 }}>
         {[
-          ["dl", "DARTSLIVE方式", "Rt 1〜18 ・ フライト"],
-          ["px", "PHOENIX方式", "Rt 1〜30 ・ クラス"],
+          ["dl", t("ui.ratingMode.dl"), t("ui.ratingMode.dlSub")],
+          ["px", t("ui.ratingMode.px"), t("ui.ratingMode.pxSub")],
         ].map(([m, label, sub]) => (
           <button
             key={m}
@@ -142,7 +143,7 @@ export function RatingModeToggle({ ratingMode, onRatingMode }) {
           </button>
         ))}
       </div>
-      <div style={{ fontSize: 10, color: C.creamDim, margin: "6px 2px 0" }}>換算方式の表示切替です。記録データは共通なのでいつでも変更できます</div>
+      <div style={{ fontSize: 10, color: C.creamDim, margin: "6px 2px 0" }}>{t("ui.ratingMode.hint")}</div>
     </div>
   );
 }
