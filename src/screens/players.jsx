@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { CATS, GAMES } from "../constants.js";
+import { LANGS, t } from "../i18n.js";
 import { AVATAR_COLORS, AVATAR_EMOJIS, EMPTY_STATS, RATING_MODE, STATS_MODE, dartsOf, ensure80, ensureModes, flightOf, fmt01, fmtCr, fmtRt, hardAvg, profileRating, profileRatingPx, ratingDisplay, rtFrom01, rtFromCr, setStatsMode, statsFor, withStatsMode } from "../profiles.js";
 import { UI } from "../sound.js";
 import { C, FONT_BODY, FONT_DISPLAY } from "../theme.js";
 import { Avatar, Btn, RatingModeToggle, StatCard } from "../ui/kit.jsx";
 
 
-export function PlayersScreen({ profiles, upsertProfile, deleteProfile, ratingMode, onRatingMode, appMode, onHome }) {
+export function PlayersScreen({ profiles, upsertProfile, deleteProfile, ratingMode, onRatingMode, lang, onLang, appMode, onHome }) {
   const accent = C.brass;
   const [viewMode, setViewMode] = useState(appMode || "soft"); // ソフト/ハードどちらの成績を見るか
   setStatsMode(viewMode); // この画面のレンダリング中は選択ビューのスタッツを参照
@@ -51,10 +52,10 @@ export function PlayersScreen({ profiles, upsertProfile, deleteProfile, ratingMo
     // もう一方の方式を小さく併記
     const otherLine = px
       ? dlr != null
-        ? `DARTSLIVE換算: Rt ${dlr.toFixed(2)}(${flightOf(dlr)} FLIGHT)`
+        ? t("players.detail.dlConv", { rt: dlr.toFixed(2), flight: flightOf(dlr) })
         : null
       : pxr != null
-      ? `PHOENIX換算: Rt ${pxr.rt}(${pxr.cls})`
+      ? t("players.detail.pxConv", { rt: pxr.rt, cls: pxr.cls })
       : null;
     const winRate = s.games ? Math.round((s.wins / s.games) * 100) : null;
     return (
@@ -66,7 +67,7 @@ export function PlayersScreen({ profiles, upsertProfile, deleteProfile, ratingMo
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontSize: 21, fontWeight: 700, color: C.cream, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{prof.name}</div>
               <div style={{ fontSize: 11, color: C.creamDim, marginTop: 3 }}>
-                {s.games}試合 {s.wins}勝{winRate != null ? ` ・ 勝率${winRate}%` : ""}
+                {t("players.gamesWins", { games: s.games, wins: s.wins })}{winRate != null ? t("players.winRateSuffix", { pct: winRate }) : ""}
               </div>
             </div>
             <div style={{ textAlign: "center" }}>
@@ -122,7 +123,7 @@ export function PlayersScreen({ profiles, upsertProfile, deleteProfile, ratingMo
                   hAvg != null ? hAvg.toFixed(1) : "-",
                   "AVG",
                   null,
-                  hb.games ? `CO ${hCo != null ? hCo + "%" : "-"} ・ 180×${hb.s01.t180 || 0} ・ ${hb.games}試合` : "未プレイ",
+                  hb.games ? t("players.detail.hardSub", { co: hCo != null ? hCo + "%" : "-", t180: hb.s01.t180 || 0, games: hb.games }) : t("players.notPlayed"),
                   !hb.games
                 )}
                 <div style={{ width: 1, background: C.line }} />
@@ -133,7 +134,7 @@ export function PlayersScreen({ profiles, upsertProfile, deleteProfile, ratingMo
                   sRd.text,
                   sRd.label,
                   sRd.badge,
-                  sbb.games ? `MPR ${sMpr != null ? sMpr.toFixed(2) : "-"} ・ ${sbb.games}試合` : "未プレイ",
+                  sbb.games ? t("players.detail.softSub", { mpr: sMpr != null ? sMpr.toFixed(2) : "-", games: sbb.games }) : t("players.notPlayed"),
                   !sbb.games
                 )}
               </div>
@@ -142,8 +143,8 @@ export function PlayersScreen({ profiles, upsertProfile, deleteProfile, ratingMo
           {!hasRt && (
             <div style={{ fontSize: 11, color: C.creamDim, margin: "8px 2px 0", lineHeight: 1.7 }}>
               {hv
-                ? "アベレージはハードモードで01をプレイすると表示されます"
-                : "Rtは01またはクリケットを3ラウンド以上プレイすると表示されます(目安値)"}
+                ? t("players.detail.avgHint")
+                : t("players.detail.rtHint")}
             </div>
           )}
 
@@ -151,16 +152,16 @@ export function PlayersScreen({ profiles, upsertProfile, deleteProfile, ratingMo
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
             {hv ? (
               <>
-                <StatCard label="AVG" value={avg != null ? avg.toFixed(1) : "-"} sub={`3ダーツ平均 ・ ${s.s01.rounds}R`} accent={CATS["01"].accent} />
+                <StatCard label="AVG" value={avg != null ? avg.toFixed(1) : "-"} sub={t("players.detail.avgSub", { r: s.s01.rounds })} accent={CATS["01"].accent} />
                 <StatCard
                   label="FIRST 9"
                   value={s.s01.d9 ? ((s.s01.p9 / s.s01.d9) * 3).toFixed(1) : "-"}
-                  sub="最初の9投の平均"
+                  sub={t("players.detail.first9Sub")}
                 />
                 <StatCard
                   label="CHECKOUT"
                   value={coRate != null ? `${coRate}%` : "-"}
-                  sub={s.s01.coAtt ? `${s.s01.coHit}/${s.s01.coAtt} 成功` : "D/Mアウトで計測"}
+                  sub={s.s01.coAtt ? t("players.detail.coSuccess", { hit: s.s01.coHit, att: s.s01.coAtt }) : t("players.detail.coHint")}
                   accent={C.brass}
                 />
               </>
@@ -169,57 +170,57 @@ export function PlayersScreen({ profiles, upsertProfile, deleteProfile, ratingMo
                 <StatCard
                   label="01 STATS"
                   value={px ? (ppd != null ? ppd.toFixed(2) : "-") : ppr != null ? ppr.toFixed(1) : "-"}
-                  sub={px ? "PPD(100%スタッツ)" : "PPR(80%スタッツ)"}
+                  sub={px ? t("players.detail.ppdSub") : t("players.detail.pprSub")}
                   accent={CATS["01"].accent}
                 />
-                <StatCard label="ROUNDS" value={s.s01.rounds || "-"} sub="累計ラウンド" />
+                <StatCard label="ROUNDS" value={s.s01.rounds || "-"} sub={t("players.detail.totalRounds")} />
                 <StatCard
                   label="RT(01)"
                   value={px ? (pxr && pxr.rt01 != null ? pxr.rt01 : "-") : rt01 != null ? rt01.toFixed(2) : "-"}
-                  sub="01由来のRt"
+                  sub={t("players.detail.rtFrom01Sub")}
                 />
               </>
             )}
           </div>
           {hv && (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginTop: 8 }}>
-              <StatCard label="TON (100+)" value={s.s01.t100 + s.s01.t140 + s.s01.t180 || "-"} sub={`内訳 100+:${s.s01.t100} 140+:${s.s01.t140}`} />
-              <StatCard label="180" value={s.s01.t180 || "-"} sub="ワンエイティ" accent={s.s01.t180 ? C.red : undefined} />
-              <StatCard label="HIGH CO" value={s.s01.hiCo || "-"} sub="最高チェックアウト" accent={s.s01.hiCo >= 100 ? C.brass : undefined} />
+              <StatCard label="TON (100+)" value={s.s01.t100 + s.s01.t140 + s.s01.t180 || "-"} sub={t("players.detail.tonBreakdown", { a: s.s01.t100, b: s.s01.t140 })} />
+              <StatCard label="180" value={s.s01.t180 || "-"} sub={t("players.detail.oneEighty")} accent={s.s01.t180 ? C.red : undefined} />
+              <StatCard label="HIGH CO" value={s.s01.hiCo || "-"} sub={t("players.detail.highCheckout")} accent={s.s01.hiCo >= 100 ? C.brass : undefined} />
             </div>
           )}
 
           <div style={{ fontSize: 11, letterSpacing: "0.2em", color: C.creamDim, fontFamily: FONT_DISPLAY, margin: "18px 2px 8px" }}>CRICKET</div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
-            <StatCard label="MPR" value={mpr != null ? mpr.toFixed(2) : "-"} sub={hv ? "MPR(100%)" : px ? "MPR(100%スタッツ)" : "MPR(80%スタッツ)"} accent={CATS.cricket.accent} />
-            {hv && <StatCard label="FIRST 9" value={s.cr.r9 ? (s.cr.m9 / s.cr.r9).toFixed(2) : "-"} sub="最初の3R平均MPR" />}
-            <StatCard label="ROUNDS" value={s.cr.rounds || "-"} sub="累計ラウンド" />
+            <StatCard label="MPR" value={mpr != null ? mpr.toFixed(2) : "-"} sub={hv ? t("players.detail.mprHard") : px ? t("players.detail.mprPx") : t("players.detail.mprDl")} accent={CATS.cricket.accent} />
+            {hv && <StatCard label="FIRST 9" value={s.cr.r9 ? (s.cr.m9 / s.cr.r9).toFixed(2) : "-"} sub={t("players.detail.first3RMpr")} />}
+            <StatCard label="ROUNDS" value={s.cr.rounds || "-"} sub={t("players.detail.totalRounds")} />
             {!hv && (
               <StatCard
                 label="RT(CR)"
                 value={px ? (pxr && pxr.rtCr != null ? pxr.rtCr : "-") : rtCr != null ? rtCr.toFixed(2) : "-"}
-                sub="クリケット由来のRt"
+                sub={t("players.detail.rtFromCrSub")}
               />
             )}
           </div>
 
           <div style={{ fontSize: 11, letterSpacing: "0.2em", color: C.creamDim, fontFamily: FONT_DISPLAY, margin: "18px 2px 8px" }}>PRACTICE</div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
-            <StatCard label="COUNT-UP" value={cu.best || "-"} sub="自己ベスト" accent={CATS.practice.accent} />
-            <StatCard label="CU AVG / R" value={cu.rounds ? (cu.points / cu.rounds).toFixed(1) : "-"} sub={`累計${cu.rounds}ラウンド`} />
+            <StatCard label="COUNT-UP" value={cu.best || "-"} sub={t("players.detail.personalBest")} accent={CATS.practice.accent} />
+            <StatCard label="CU AVG / R" value={cu.rounds ? (cu.points / cu.rounds).toFixed(1) : "-"} sub={t("players.detail.totalRoundsWithN", { n: cu.rounds })} />
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginTop: 8 }}>
             {hv ? (
               <>
-                <StatCard label="ATC" value={s.pr && s.pr.atcBest ? `${s.pr.atcBest}投` : "-"} sub="完走の最少投数" />
-                <StatCard label="BOB'S 27" value={s.pr && s.pr.bobBest ? s.pr.bobBest : "-"} sub="ハイスコア" />
-                <StatCard label="121" value={s.pr && s.pr.p121Best ? s.pr.p121Best : "-"} sub="最高到達点" accent={s.pr && s.pr.p121Best >= 121 ? C.brass : undefined} />
+                <StatCard label="ATC" value={s.pr && s.pr.atcBest ? t("players.detail.atcThrows", { n: s.pr.atcBest }) : "-"} sub={t("players.detail.atcSub")} />
+                <StatCard label="BOB'S 27" value={s.pr && s.pr.bobBest ? s.pr.bobBest : "-"} sub={t("players.detail.highScore")} />
+                <StatCard label="121" value={s.pr && s.pr.p121Best ? s.pr.p121Best : "-"} sub={t("players.detail.bestReach")} accent={s.pr && s.pr.p121Best >= 121 ? C.brass : undefined} />
               </>
             ) : (
               <>
-                <StatCard label="SHOOT OUT" value={s.pr && s.pr.shootBest ? s.pr.shootBest : "-"} sub="ハイスコア" />
-                <StatCard label="CR CU" value={s.pr && s.pr.crcuBest ? s.pr.crcuBest : "-"} sub="クリカン最高マーク" />
-                <StatCard label="HALF-IT" value={s.pr && s.pr.halfBest ? s.pr.halfBest : "-"} sub="ハイスコア" />
+                <StatCard label="SHOOT OUT" value={s.pr && s.pr.shootBest ? s.pr.shootBest : "-"} sub={t("players.detail.highScore")} />
+                <StatCard label="CR CU" value={s.pr && s.pr.crcuBest ? s.pr.crcuBest : "-"} sub={t("players.detail.crcuBestMarks")} />
+                <StatCard label="HALF-IT" value={s.pr && s.pr.halfBest ? s.pr.halfBest : "-"} sub={t("players.detail.highScore")} />
               </>
             )}
           </div>
@@ -232,7 +233,7 @@ export function PlayersScreen({ profiles, upsertProfile, deleteProfile, ratingMo
               }}
               style={{ flex: 1, fontWeight: 700 }}
             >
-              ✎ 編集
+              {t("players.edit")}
             </Btn>
             <Btn
               onClick={() => {
@@ -241,12 +242,12 @@ export function PlayersScreen({ profiles, upsertProfile, deleteProfile, ratingMo
               }}
               style={{ flex: 1, color: C.creamDim }}
             >
-              🗑 削除
+              {t("players.delete")}
             </Btn>
           </div>
           {delConfirm && (
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 10, background: C.surface, border: `1px solid ${C.red}`, borderRadius: 12, padding: "10px 12px" }}>
-              <div style={{ flex: 1, fontSize: 12, color: C.red }}>スタッツごと完全に削除します。よろしいですか?</div>
+              <div style={{ flex: 1, fontSize: 12, color: C.red }}>{t("players.deleteConfirm")}</div>
               <Btn
                 onClick={() => {
                   UI.back();
@@ -256,7 +257,7 @@ export function PlayersScreen({ profiles, upsertProfile, deleteProfile, ratingMo
                 }}
                 style={{ padding: "6px 14px", fontSize: 12, background: C.red, border: "none", color: "#fff" }}
               >
-                削除する
+                {t("players.deleteConfirmButton")}
               </Btn>
             </div>
           )}
@@ -285,8 +286,8 @@ export function PlayersScreen({ profiles, upsertProfile, deleteProfile, ratingMo
         <div style={{ marginBottom: 16 }}>
           <div style={{ display: "flex", gap: 6, marginBottom: 8 }}>
             {[
-              ["hard", "🎯 ハードダーツ", "AVG ・ チェックアウト率"],
-              ["soft", "🟦 ソフトダーツ", `Rt ・ ${ratingMode === "px" ? "100%" : "80%"}スタッツ`],
+              ["hard", t("home.modeHard"), t("players.viewToggle.hardSub")],
+              ["soft", t("players.viewToggle.soft"), t("players.viewToggle.softSub", { pct: ratingMode === "px" ? "100" : "80" })],
             ].map(([m, label, sub]) => (
               <button
                 key={m}
@@ -313,15 +314,43 @@ export function PlayersScreen({ profiles, upsertProfile, deleteProfile, ratingMo
           {!hv && <RatingModeToggle ratingMode={ratingMode} onRatingMode={onRatingMode} />}
           {hv && (
             <div style={{ fontSize: 10, color: C.creamDim, margin: "0 2px" }}>
-              ハードダーツの成績はソフトとは別に記録されます(レーティングではなく3ダーツアベレージで表示)
+              {t("players.hardStatsNote")}
             </div>
           )}
+          <div style={{ marginTop: 10 }}>
+            <div style={{ fontSize: 10, color: C.creamDim, margin: "0 2px 6px", letterSpacing: "0.1em" }}>{t("settings.language")}</div>
+            <div style={{ display: "flex", gap: 6 }}>
+              {LANGS.map(([code, label]) => (
+                <button
+                  key={code}
+                  onClick={() => {
+                    UI.toggle();
+                    onLang && onLang(code);
+                  }}
+                  style={{
+                    flex: 1,
+                    padding: "8px 0",
+                    borderRadius: 10,
+                    cursor: "pointer",
+                    fontFamily: FONT_BODY,
+                    fontSize: 12.5,
+                    fontWeight: 700,
+                    color: (lang || "ja") === code ? "#1A1C20" : C.creamDim,
+                    background: (lang || "ja") === code ? C.brass : C.surface,
+                    border: `1.5px solid ${(lang || "ja") === code ? C.brass : C.line}`,
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
         {profiles.length === 0 && (
           <div style={{ fontSize: 13, color: C.creamDim, textAlign: "center", padding: "28px 0", lineHeight: 1.9 }}>
-            登録プレイヤーがまだいません。
+            {t("players.empty.title")}
             <br />
-            登録して対戦すると、スタッツとRtがここに貯まっていきます。
+            {t("players.empty.hint")}
           </div>
         )}
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -340,7 +369,7 @@ export function PlayersScreen({ profiles, upsertProfile, deleteProfile, ratingMo
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 15.5, fontWeight: 700, color: C.cream, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name}</div>
                   <div style={{ fontSize: 10.5, color: C.creamDim, marginTop: 2 }}>
-                    01: {fmt01(p)} ・ CR: {fmtCr(p)} ・ {statsFor(p).games}試合 {statsFor(p).wins}勝
+                    01: {fmt01(p)} ・ CR: {fmtCr(p)} ・ {t("players.gamesWins", { games: statsFor(p).games, wins: statsFor(p).wins })}
                   </div>
                 </div>
                 <div style={{ textAlign: "right" }}>
@@ -362,7 +391,7 @@ export function PlayersScreen({ profiles, upsertProfile, deleteProfile, ratingMo
           }}
           style={{ width: "100%", marginTop: 14, fontWeight: 700 }}
         >
-          ＋ 新規プレイヤーを登録
+          {t("players.addNew")}
         </Btn>
 
         {editing && (
@@ -447,23 +476,23 @@ export function ProfileEditor({ initial, accent, onSave, onClose }) {
             value={name}
             onChange={(e) => setName(e.target.value)}
             maxLength={12}
-            placeholder="プレイヤー名"
+            placeholder={t("players.editor.namePlaceholder")}
             style={{ flex: 1, background: C.surface2, border: `1px solid ${C.line}`, borderRadius: 10, padding: "12px 12px", color: C.cream, fontFamily: FONT_BODY, fontSize: 16, outline: "none" }}
           />
         </div>
 
         <div style={{ display: "flex", gap: 6, marginTop: 14 }}>
           {[
-            ["emoji", "絵文字"],
-            ["photo", "写真"],
-          ].map(([t, label]) => (
+            ["emoji", t("players.editor.emojiTab")],
+            ["photo", t("players.editor.photoTab")],
+          ].map(([tb, label]) => (
             <button
-              key={t}
+              key={tb}
               onClick={() => {
                 UI.toggle();
-                setTab(t);
+                setTab(tb);
               }}
-              style={{ flex: 1, padding: "8px 0", borderRadius: 10, cursor: "pointer", fontFamily: FONT_BODY, fontSize: 13, fontWeight: 700, color: tab === t ? C.cream : C.creamDim, background: tab === t ? C.surface2 : "transparent", border: `1.5px solid ${tab === t ? accent : C.line}` }}
+              style={{ flex: 1, padding: "8px 0", borderRadius: 10, cursor: "pointer", fontFamily: FONT_BODY, fontSize: 13, fontWeight: 700, color: tab === tb ? C.cream : C.creamDim, background: tab === tb ? C.surface2 : "transparent", border: `1.5px solid ${tab === tb ? accent : C.line}` }}
             >
               {label}
             </button>
@@ -503,7 +532,7 @@ export function ProfileEditor({ initial, accent, onSave, onClose }) {
           <label
             style={{ display: "block", marginTop: 12, padding: "20px 0", borderRadius: 12, border: `1.5px dashed ${C.line}`, textAlign: "center", color: C.creamDim, fontSize: 13, cursor: "pointer" }}
           >
-            📷 写真を選ぶ(自動で正方形に切り抜き)
+            {t("players.editor.choosePhoto")}
             <input type="file" accept="image/*" onChange={onFile} style={{ display: "none" }} />
           </label>
         )}
@@ -513,7 +542,7 @@ export function ProfileEditor({ initial, accent, onSave, onClose }) {
           disabled={!name.trim()}
           style={{ marginTop: 16, width: "100%", padding: "13px 0", borderRadius: 12, border: "none", cursor: name.trim() ? "pointer" : "default", opacity: name.trim() ? 1 : 0.4, background: accent, color: "#fff", fontFamily: FONT_DISPLAY, fontSize: 16, fontWeight: 700, letterSpacing: "0.15em" }}
         >
-          保存
+          {t("players.editor.save")}
         </button>
       </div>
     </div>
@@ -541,9 +570,9 @@ export function ProfilePicker({ profiles, usedIds, accent, onPick, onCreate, onE
 
         {profiles.length === 0 && (
           <div style={{ fontSize: 13, color: C.creamDim, textAlign: "center", padding: "16px 0", lineHeight: 1.8 }}>
-            登録プレイヤーがまだいません。
+            {t("players.empty.title")}
             <br />
-            登録するとスタッツとRtが記録されます。
+            {t("players.picker.emptyHint")}
           </div>
         )}
 
@@ -565,10 +594,10 @@ export function ProfilePicker({ profiles, usedIds, accent, onPick, onCreate, onE
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 14.5, fontWeight: 700, color: C.cream, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
                         {prof.name}
-                        {used && <span style={{ fontSize: 10.5, color: C.creamDim, marginLeft: 6 }}>(選択済み)</span>}
+                        {used && <span style={{ fontSize: 10.5, color: C.creamDim, marginLeft: 6 }}>{t("players.picker.alreadyUsed")}</span>}
                       </div>
                       <div style={{ fontSize: 10.5, color: C.creamDim, marginTop: 2 }}>
-                        01: {fmt01(prof)} ・ CR: {fmtCr(prof)} ・ {statsFor(prof).games}試合 {statsFor(prof).wins}勝
+                        01: {fmt01(prof)} ・ CR: {fmtCr(prof)} ・ {t("players.gamesWins", { games: statsFor(prof).games, wins: statsFor(prof).wins })}
                       </div>
                     </div>
                     <div style={{ textAlign: "right" }}>
@@ -599,7 +628,7 @@ export function ProfilePicker({ profiles, usedIds, accent, onPick, onCreate, onE
                 </div>
                 {delId === prof.id && (
                   <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8, paddingTop: 8, borderTop: `1px solid ${C.line}` }}>
-                    <div style={{ flex: 1, fontSize: 11.5, color: C.red }}>スタッツごと削除します。よろしいですか?</div>
+                    <div style={{ flex: 1, fontSize: 11.5, color: C.red }}>{t("players.picker.deleteConfirm")}</div>
                     <Btn
                       onClick={() => {
                         UI.back();
@@ -608,7 +637,7 @@ export function ProfilePicker({ profiles, usedIds, accent, onPick, onCreate, onE
                       }}
                       style={{ padding: "5px 12px", fontSize: 12, background: C.red, border: "none", color: "#fff" }}
                     >
-                      削除
+                      {t("players.picker.delete")}
                     </Btn>
                     <Btn
                       onClick={() => {
@@ -617,7 +646,7 @@ export function ProfilePicker({ profiles, usedIds, accent, onPick, onCreate, onE
                       }}
                       style={{ padding: "5px 12px", fontSize: 12 }}
                     >
-                      やめる
+                      {t("players.picker.deleteCancel")}
                     </Btn>
                   </div>
                 )}
@@ -633,7 +662,7 @@ export function ProfilePicker({ profiles, usedIds, accent, onPick, onCreate, onE
           }}
           style={{ width: "100%", marginTop: 12, fontFamily: FONT_BODY, fontWeight: 700 }}
         >
-          ＋ 新規プレイヤーを登録
+          {t("players.addNew")}
         </Btn>
       </div>
     </div>
