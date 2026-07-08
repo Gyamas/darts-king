@@ -26,6 +26,7 @@ export const EMPTY_MODE_STATS = () => ({
   cr: { rounds: 0, marks: 0, r80: 0, m80: 0, m9: 0, r9: 0 },
   cu: { rounds: 0, points: 0, best: 0 },
   pr: { atcBest: 0, bobBest: 0, p121Best: 0, crcuBest: 0, halfBest: 0, shootBest: 0 }, // 練習レコード(atcBestは最少投数)
+  awards: { hatTrick: 0, ton80: 0, threeInTheBlack: 0, threeInABed: 0, whiteHorse: 0, nineMark: 0 }, // ソフト01/クリケットのアワード通算(旧データには無いため読み出し側は ?? 0 で欠損を吸収)
   games: 0,
   wins: 0,
 });

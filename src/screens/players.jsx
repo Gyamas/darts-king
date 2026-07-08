@@ -225,6 +225,22 @@ export function PlayersScreen({ profiles, upsertProfile, deleteProfile, ratingMo
             )}
           </div>
 
+          {!hv && (
+            <>
+              <div style={{ fontSize: 11, letterSpacing: "0.2em", color: C.creamDim, fontFamily: FONT_DISPLAY, margin: "18px 2px 8px" }}>{t("players.detail.awardsSection")}</div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+                <StatCard label="HAT TRICK" value={s.awards?.hatTrick ?? 0} sub={t("players.detail.awardCount", { n: s.awards?.hatTrick ?? 0 })} />
+                <StatCard label="TON 80" value={s.awards?.ton80 ?? 0} sub={t("players.detail.awardCount", { n: s.awards?.ton80 ?? 0 })} />
+                <StatCard label="3 IN THE BLACK" value={s.awards?.threeInTheBlack ?? 0} sub={t("players.detail.awardCount", { n: s.awards?.threeInTheBlack ?? 0 })} />
+              </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, marginTop: 8 }}>
+                <StatCard label="3 IN A BED" value={s.awards?.threeInABed ?? 0} sub={t("players.detail.awardCount", { n: s.awards?.threeInABed ?? 0 })} />
+                <StatCard label="WHITE HORSE" value={s.awards?.whiteHorse ?? 0} sub={t("players.detail.awardCount", { n: s.awards?.whiteHorse ?? 0 })} />
+                <StatCard label="9 MARK" value={s.awards?.nineMark ?? 0} sub={t("players.detail.awardCount", { n: s.awards?.nineMark ?? 0 })} />
+              </div>
+            </>
+          )}
+
           <div style={{ display: "flex", gap: 8, marginTop: 22 }}>
             <Btn
               onClick={() => {

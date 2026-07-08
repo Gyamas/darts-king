@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { CATS, deep, kindKey, medleySeq } from "./constants.js";
-import { newGame } from "./engine/game.js";
+import { mergeAwardTally, newGame } from "./engine/game.js";
 import { getLang, onLangChange, setLang } from "./i18n.js";
 import { ensureModes, loadProfiles, loadSettings, saveProfiles, saveSettings, setRatingModeGlobal, setStatsMode } from "./profiles.js";
 import { Flow, GameOnSplash } from "./screens/flow.jsx";
@@ -72,7 +72,7 @@ export default function DartsScorer() {
   };
 
   // ゲーム終了時: 登録プレイヤーにスタッツを計上(1ゲーム1回)
-  const onFinished = (g) => {
+  const onFinished = (g, awardTally) => {
     if (!g.gid || savedGid === g.gid) return;
     setSavedGid(g.gid);
     setProfiles((ps) => {
@@ -85,6 +85,9 @@ export default function DartsScorer() {
         const st = g.pstats[i];
         ensureModes(prof.stats);
         const ms = prof.stats[g.mode === "hard" ? "hard" : "soft"]; // プレイしたモードの枝にだけ計上(干渉なし)
+        if (awardTally && awardTally[i]) {
+          ms.awards = mergeAwardTally(ms.awards, awardTally[i]); // 旧データにawardsが無くても書き込み時に補う(マイグレーションはしない)
+        }
         if (g.kind === "01") {
           ms.s01.rounds += st.rounds;
           ms.s01.points += st.points;

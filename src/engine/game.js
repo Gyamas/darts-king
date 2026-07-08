@@ -375,3 +375,37 @@ export function detectAward(g) {
   if (total >= 100) return { name: "LOW TON", sub: t("award.points.sub", { total }), tier: "mid" };
   return null;
 }
+
+
+// ---------- award tally (ソフト01/クリケットのみ通算集計。HIGH TON/LOW TONは頻発するため対象外) ----------
+export const AWARD_TALLY_KEYS = {
+  "HAT TRICK": "hatTrick",
+  "TON 80": "ton80",
+  "THREE IN THE BLACK": "threeInTheBlack",
+  "THREE IN A BED": "threeInABed",
+  "WHITE HORSE": "whiteHorse",
+  "9 MARK": "nineMark",
+};
+
+// detectAwardが返すnameから通算集計キーを引く。対象外のアワードはnull
+export function awardTallyKey(name) {
+  return AWARD_TALLY_KEYS[name] || null;
+}
+
+// tally: { [playerIdx]: { [key]: count } } にawardNameの分を1加算した新しいオブジェクトを返す(純関数)
+export function addAwardTally(tally, playerIdx, awardName) {
+  const key = awardTallyKey(awardName);
+  if (!key) return tally;
+  const cur = tally[playerIdx] || {};
+  return { ...tally, [playerIdx]: { ...cur, [key]: (cur[key] || 0) + 1 } };
+}
+
+// プレイヤー1人分のtally({ [key]: count })をプロフィールのawardsオブジェクトへマージした新オブジェクトを返す(純関数)
+export function mergeAwardTally(awards, playerTally) {
+  const next = { ...(awards || {}) };
+  if (!playerTally) return next;
+  for (const key in playerTally) {
+    next[key] = (next[key] || 0) + playerTally[key];
+  }
+  return next;
+}

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { CATS, CRCU_SEQ, CRICKET_NUMS, HALFIT_SEQ, P121_CHALLENGES, deep, halfitLabel, kindKey } from "../constants.js";
 import { dartLabel, isDeadNumber, isFatBull } from "../engine/board.js";
 import { checkoutRoute } from "../engine/checkout.js";
-import { applyDart, detectAward, endTurn } from "../engine/game.js";
+import { addAwardTally, applyDart, detectAward, endTurn } from "../engine/game.js";
 import { roboThrow } from "../engine/robo.js";
 import { t } from "../i18n.js";
 import { RATING_MODE } from "../profiles.js";
@@ -226,6 +226,7 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
   const [inputMode, setInputMode] = useState("board");
   const [flash, setFlash] = useState(null);
   const [award, setAward] = useState(null);
+  const [awardTally, setAwardTally] = useState({}); // { [playerIdx]: { [awardKey]: count } } このゲーム内のみ集計
   // 横画面対応: 横長なら「左=スコア情報 / 右=ボード入力」の2カラム
   const vp = useViewport();
   const ls = vp.w > vp.h * 1.15 && vp.w >= 640 && !g.finished;
@@ -233,7 +234,11 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
   const TH = CATS[kindKey(g.kind)];
 
   useEffect(() => {
-    if (g.finished && onFinished) onFinished(g);
+    setAwardTally({}); // レグ/ゲームが変わったら集計をリセット
+  }, [g.gid]);
+
+  useEffect(() => {
+    if (g.finished && onFinished) onFinished(g, awardTally);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [g.finished, g.gid]);
 
@@ -321,6 +326,8 @@ export function Game({ g, setG, history, setHistory, onQuit, onRestart, sound, t
     if (awardKind && ((g2.darts.length === 3 && !g2.bust && !g2.finished) || (g2.finished && g2.mode === "hard" && g2.darts.reduce((s, x) => s + x.value, 0) === 180))) {
       const aw = detectAward(g2);
       if (aw) {
+        const who = g.current;
+        setAwardTally((prev) => addAwardTally(prev, who, aw.name));
         setTimeout(() => {
           setAward({ ...aw, key: Date.now() });
           if (sound) {

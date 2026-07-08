@@ -207,6 +207,8 @@ export const DICTS = {
     "players.picker.deleteCancel": "やめる",
     "players.editor.sectionIcon": "アイコン",
     "players.editor.sectionColor": "カラー",
+    "players.detail.awardsSection": "アワード",
+    "players.detail.awardCount": "通算{n}回",
 
     "match.zeroOneSub": "ゼロワン",
     "match.cricketSub": "クリケット",
@@ -438,6 +440,8 @@ export const DICTS = {
     "players.picker.deleteCancel": "Cancel",
     "players.editor.sectionIcon": "ICON",
     "players.editor.sectionColor": "COLOR",
+    "players.detail.awardsSection": "AWARDS",
+    "players.detail.awardCount": "{n} times",
     "match.zeroOneSub": "01",
     "match.cricketSub": "Cricket",
     "match.choice.selectGame": "Pick the game for the final leg",
