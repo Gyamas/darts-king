@@ -205,6 +205,8 @@ export const DICTS = {
     "players.picker.deleteConfirm": "スタッツごと削除します。よろしいですか?",
     "players.picker.delete": "削除",
     "players.picker.deleteCancel": "やめる",
+    "players.editor.sectionIcon": "アイコン",
+    "players.editor.sectionColor": "カラー",
 
     "match.zeroOneSub": "ゼロワン",
     "match.cricketSub": "クリケット",
@@ -434,6 +436,8 @@ export const DICTS = {
     "players.picker.deleteConfirm": "This deletes the player and all stats. Continue?",
     "players.picker.delete": "Delete",
     "players.picker.deleteCancel": "Cancel",
+    "players.editor.sectionIcon": "ICON",
+    "players.editor.sectionColor": "COLOR",
     "match.zeroOneSub": "01",
     "match.cricketSub": "Cricket",
     "match.choice.selectGame": "Pick the game for the final leg",

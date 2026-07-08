@@ -414,8 +414,8 @@ export function PlayersScreen({ profiles, upsertProfile, deleteProfile, ratingMo
 export function ProfileEditor({ initial, accent, onSave, onClose }) {
   const [name, setName] = useState(initial ? initial.name : "");
   const [tab, setTab] = useState(initial && initial.avatar && initial.avatar.kind === "photo" ? "photo" : "emoji");
-  const [emoji, setEmoji] = useState(initial && initial.avatar && initial.avatar.kind === "emoji" ? initial.avatar.emoji : "🎯");
-  const [color, setColor] = useState(initial && initial.avatar && initial.avatar.kind === "emoji" ? initial.avatar.color : AVATAR_COLORS[0]);
+  const [emoji, setEmoji] = useState(initial && initial.avatar && initial.avatar.kind === "emoji" ? initial.avatar.emoji : "👑");
+  const [color, setColor] = useState(initial && initial.avatar && initial.avatar.kind === "emoji" ? initial.avatar.color : AVATAR_COLORS[3]);
   const [photo, setPhoto] = useState(initial && initial.avatar && initial.avatar.kind === "photo" ? initial.avatar.data : null);
   const avatar = tab === "photo" && photo ? { kind: "photo", data: photo } : { kind: "emoji", emoji, color };
 
@@ -471,7 +471,10 @@ export function ProfileEditor({ initial, accent, onSave, onClose }) {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 14 }}>
-          <Avatar avatar={avatar} size={64} />
+          <div style={{ position: "relative", width: 64, height: 64, flexShrink: 0 }}>
+            <Avatar avatar={avatar} size={64} />
+            <div style={{ position: "absolute", inset: 0, borderRadius: 18, boxShadow: "inset 0 1px 0 rgba(255,255,255,.18)", pointerEvents: "none" }} />
+          </div>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -492,7 +495,7 @@ export function ProfileEditor({ initial, accent, onSave, onClose }) {
                 UI.toggle();
                 setTab(tb);
               }}
-              style={{ flex: 1, padding: "8px 0", borderRadius: 10, cursor: "pointer", fontFamily: FONT_BODY, fontSize: 13, fontWeight: 700, color: tab === tb ? C.cream : C.creamDim, background: tab === tb ? C.surface2 : "transparent", border: `1.5px solid ${tab === tb ? accent : C.line}` }}
+              style={{ flex: 1, padding: "8px 0", borderRadius: 10, cursor: "pointer", fontFamily: FONT_BODY, fontSize: 13, fontWeight: 700, color: tab === tb ? accent : C.creamDim, background: tab === tb ? `${accent}22` : "transparent", border: `1.5px solid ${tab === tb ? accent : C.line}` }}
             >
               {label}
             </button>
@@ -501,29 +504,55 @@ export function ProfileEditor({ initial, accent, onSave, onClose }) {
 
         {tab === "emoji" ? (
           <>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(10, 1fr)", gap: 4, marginTop: 12 }}>
+            <style>{`.pickCell:active { filter: brightness(1.3); }`}</style>
+            <div style={{ fontFamily: FONT_DISPLAY, fontSize: 11, letterSpacing: "0.15em", color: accent, opacity: 0.7, marginTop: 14, marginBottom: 6 }}>{t("players.editor.sectionIcon")}</div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(10, 1fr)", gap: 4 }}>
               {AVATAR_EMOJIS.map((em) => (
                 <button
                   key={em}
+                  className="pickCell"
                   onClick={() => {
                     UI.tick();
                     setEmoji(em);
                   }}
-                  style={{ fontSize: 19, padding: "5px 0", borderRadius: 8, cursor: "pointer", background: emoji === em ? C.surface2 : "transparent", border: `1.5px solid ${emoji === em ? accent : "transparent"}`, lineHeight: 1.3 }}
+                  style={{
+                    aspectRatio: "1",
+                    width: "100%",
+                    fontSize: 19,
+                    borderRadius: "50%",
+                    cursor: "pointer",
+                    background: "rgba(255,255,255,0.07)",
+                    border: "none",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    lineHeight: 1,
+                    boxShadow: emoji === em ? `0 0 0 1.5px ${C.surface}, 0 0 0 3.5px ${accent}` : "none",
+                  }}
                 >
                   {em}
                 </button>
               ))}
             </div>
-            <div style={{ display: "flex", gap: 6, marginTop: 10, justifyContent: "space-between" }}>
+            <div style={{ fontFamily: FONT_DISPLAY, fontSize: 11, letterSpacing: "0.15em", color: accent, opacity: 0.7, marginTop: 14, marginBottom: 6 }}>{t("players.editor.sectionColor")}</div>
+            <div style={{ display: "flex", gap: 6, justifyContent: "space-between" }}>
               {AVATAR_COLORS.map((cl) => (
                 <button
                   key={cl}
+                  className="pickCell"
                   onClick={() => {
                     UI.tick();
                     setColor(cl);
                   }}
-                  style={{ flex: 1, height: 30, borderRadius: 8, cursor: "pointer", background: cl, border: `2.5px solid ${color === cl ? "#fff" : "transparent"}` }}
+                  style={{
+                    flex: 1,
+                    height: 30,
+                    borderRadius: 8,
+                    cursor: "pointer",
+                    background: cl,
+                    border: "none",
+                    boxShadow: color === cl ? `0 0 0 1.5px ${C.surface}, 0 0 0 3.5px ${accent}` : "none",
+                  }}
                 />
               ))}
             </div>
