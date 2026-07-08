@@ -72,7 +72,7 @@ export function PlayersScreen({ profiles, upsertProfile, deleteProfile, ratingMo
             </div>
             <div style={{ textAlign: "center" }}>
               <div style={{ fontSize: 9.5, letterSpacing: "0.2em", color: C.creamDim, fontFamily: FONT_DISPLAY }}>
-                {hv ? "3-DARTS AVG" : <>RATING <span style={{ opacity: 0.7 }}>({px ? "PHOENIX" : "DARTSLIVE"})</span></>}
+                {hv ? "3-DARTS AVG" : <>RATING <span style={{ opacity: 0.7 }}>({px ? t("players.detail.ratingScalePx") : t("players.detail.ratingScaleDl")})</span></>}
               </div>
               <div style={{ fontFamily: FONT_DISPLAY, fontSize: 36, fontWeight: 700, color: accent, lineHeight: 1, fontVariantNumeric: "tabular-nums" }}>{rd.text}</div>
               {rd.badge && (
